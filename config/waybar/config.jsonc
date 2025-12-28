@@ -1,0 +1,66 @@
+{	
+	
+	"height": 36, // Waybar height (to be removed for auto height)
+    // "width": 1280, // Waybar width
+
+    "spacing": 4, // Gaps between modules (4px)
+    // Choose the order of the modules
+    "margin-left": 5,
+    "margin-right": 5,
+    "margin-top": 5,
+    "modules-left": [
+        "hyprland/workspaces"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "pulseaudio",
+        "custom/power"
+    ],
+    // Modules configuration
+    // "sway/workspaces": {
+    //     "disable-scroll": true,
+    //     "all-outputs": true,
+    //     "warp-on-scroll": false,
+    //     "format": "{name}: {icon}",
+    //     "format-icons": {
+    //         "1": "",
+    //         "2": "",
+    //         "3": "",
+    //         "4": "",
+    //         "5": "",
+    //         "urgent": "",
+    //         "focused": "",
+    //         "default": ""
+    //     }
+    // },
+        
+    
+    "clock": {
+        // "timezone": "America/New_York",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}"
+    },
+   "hyprland/workspaces": {
+	
+	
+       "persistent-workspaces": {
+             "*": 5, // 5 workspaces by default on every monitor
+             "HDMI-A-1": 3 // but only three on HDMI-A-1
+       }
+},
+   "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{volume}%:Volume",
+        "format-icons": {
+            "default": ""
+        },
+        "on-click": "pavucontrol"
+    }, 
+    "custom/power": {
+        "format" : "⏻",
+        "on-click": "wlogout",
+        "tooltip": false
+    }
+}

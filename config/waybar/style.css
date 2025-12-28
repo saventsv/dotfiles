@@ -1,0 +1,121 @@
+* {
+	font-family: JetBrainsMono Nerd Font Mono;
+	font-size: 14px;
+  color: #89b4fa;
+  font-weight: bold;
+}
+
+
+	window#waybar {
+    background-color: #2e3440;
+}
+
+
+	button {
+  background: none;
+	box-shadow: inset 0 -3px transparent;
+	border: none;
+	border-radius: 5px;
+}
+
+	button:hover {
+
+	background: inherit;
+        box-shadow: inset 0 -3px #ffffff;
+
+}
+
+	#pulseaudio {
+
+	margin-right: 5px;
+	margin-left: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: #89b4fa;
+	border-radius: 20px;
+	font-size: 14px;
+	transition: opacity 0.15s ease;
+	
+}
+
+	#pulseaudio:hover {
+	opacity: 0.8;
+
+}
+	#pulseaudio:active {
+	opacity: 0.7;
+
+}
+
+	#clock {
+	margin-right: 5px;
+	margin-left: 5px;
+	color: #89b4fa;
+	border-radius: 20px;
+	border: none;
+	padding-left: 20px;
+	padding-right: 20px;
+	transition: opacity 0.15s ease;
+
+}
+
+	#clock:hover {
+	
+	opacity: 0.8;
+	border: none;
+	border-bottom: none;
+
+}
+
+	#clock:active {
+	
+	opacity: 0.7;
+	border: none;
+
+}
+
+	#custom-power {
+
+	margin-right: 5px;
+	margin-left: 5px;
+	border-radius: 20px;
+	color: #bf616a;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: 28px;
+	transition: opacity 0.15s ease;
+}
+
+	#custom-power:hover {
+	opacity: 0.8;
+
+}
+
+	#workspaces button {
+
+	border: none;
+	margin-right: 2px;
+	padding-left: 10px;
+	padding-right: 10px;
+	transition: all 0.15s ease;
+
+}
+
+	#worspaces button:hover {
+	
+	opacity: 0.8;
+    border-bottom: none;
+
+}
+
+	#workspaces button.active {
+		opacity: 0.7;
+    box-shadow: inset 0 -4px #89b4fa;
+    border-radius: 0;
+
+}
+	#workspaces button.focused {
+		opacity: 0.7;
+	
+	
+}
