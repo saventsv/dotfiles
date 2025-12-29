@@ -1,3 +1,6 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
 vim.opt.shiftwidth = 2
 vim.opt.number = true
 vim.opt.rnu = true
@@ -6,8 +9,17 @@ vim.opt.softtabstop = 2
 vim.opt.expandtab = true
 vim.opt.wrap = false
 
-vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
+vim.keymap.set("n", "<leader>f", vim.cmd.Ex, { desc = "Open netrw explorer" })
+vim.keymap.set("n", "<CR>", function()
+  local url = vim.fn.expand("<cfile>")
+
+  if url:match("https?://") then
+    vim.fn.jobstart({"zen-browser", url}, { detach = true })
+  else
+    local key = vim.api.nvim_replace_termcodes("<CR>", true, false, true)
+    vim.api.nvim_feedkeys(key, "n", false)
+  end
+end, { silent = true })
 
 -- Enable syntax highlighting (it's on by default, but this is explicit)
 
@@ -40,5 +52,16 @@ vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'Pmenu', { bg = 'none' })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.keymap.set("n", "<CR>", "gf", { buffer = true, desc = "Follow file link" })
+    vim.opt_local.suffixesadd:append(".md")
+  end,
+})
 
+vim.keymap.set("n", "<bs>", ":edit #<cr>", { 
+  silent = true, 
+  desc = "Markdown: Go back to previous file" 
+})
 

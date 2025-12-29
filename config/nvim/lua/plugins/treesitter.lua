@@ -4,7 +4,7 @@ return {
   event = 'BufReadPost',
   config = function()
     require('nvim-treesitter.configs').setup({
-      ensure_installed = { "c", "lua", "vim", "javascript", "python", "html", "css" }, -- Parsers you installed
+      ensure_installed = { "c", "lua", "vim", "javascript", "python", "html", "css", "markdown", "markdown_inline"}, -- Parsers you installed
       highlight = {
         enable = true, -- <--- This line enables Treesitter highlighting
       },
