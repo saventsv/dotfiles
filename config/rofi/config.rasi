@@ -167,5 +167,7 @@ configuration {
   }
 }
 
-@theme "/home/saven/.config/rofi/themes/nord.rasi"
+//@theme "/home/saven/.config/rofi/themes/nord.rasi"
 
+
+@theme "/home/saven/.config/rofi/themes/nord.rasi"
