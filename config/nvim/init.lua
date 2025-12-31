@@ -1,5 +1,14 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    -- Maps <CR> (Enter) to the gx action specifically in markdown buffers
+    vim.keymap.set("n", "<CR>", "<cmd>Browse<cr>", { buffer = true, desc = "gx.nvim: Open link" })
+  end,
+})
 
 vim.opt.number = true
 vim.opt.rnu = true
@@ -10,8 +19,8 @@ vim.opt.expandtab = true
 vim.opt.wrap = false
 
 vim.keymap.set("n", "<leader>f", vim.cmd.Ex, { desc = "Open netrw explorer" })
-vim.keymap.set("n", "-", "<CMD>silent! Oil<CR>", { desc = "Open parent directory" })
--- Enable syntax highlighting (it's on by default, but this is explicit)
+vim.keymap.set("n", "<leader>+", vim.cmd.noh, { desc = "removes hilighting" })
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
 -- Bootstrap lazy.nvim plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -50,8 +59,19 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.keymap.set("n", "<bs>", ":edit #<cr>", { 
-  silent = true, 
-  desc = "Markdown: Go back to previous file" 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.suffixesadd:append(".md")
+    vim.keymap.set("n", "<CR>", function()
+      local line = vim.api.nvim_get_current_line()
+      if line:find("https?://") or line:find("www%.") then
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("gx", true, false, true), "m", true)
+      else
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("gf", true, false, true), "m", true)
+      end
+    end, { buffer = true, desc = "Follow Link (URL or File)" })
+    vim.keymap.set("n", "<BS>", "<C-o>", { buffer = true, desc = "Go back to previous file" })
+  end,
 })
 
