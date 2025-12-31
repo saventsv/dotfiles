@@ -10,17 +10,7 @@ vim.opt.expandtab = true
 vim.opt.wrap = false
 
 vim.keymap.set("n", "<leader>f", vim.cmd.Ex, { desc = "Open netrw explorer" })
-vim.keymap.set("n", "<CR>", function()
-  local url = vim.fn.expand("<cfile>")
-
-  if url:match("https?://") then
-    vim.fn.jobstart({"zen-browser", url}, { detach = true })
-  else
-    local key = vim.api.nvim_replace_termcodes("<CR>", true, false, true)
-    vim.api.nvim_feedkeys(key, "n", false)
-  end
-end, { silent = true })
-
+vim.keymap.set("n", "-", "<CMD>silent! Oil<CR>", { desc = "Open parent directory" })
 -- Enable syntax highlighting (it's on by default, but this is explicit)
 
 -- Bootstrap lazy.nvim plugin manager
