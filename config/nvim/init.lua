@@ -16,11 +16,14 @@ vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.expandtab = true
+vim.opt.autoindent = true
 vim.opt.wrap = false
+vim.opt.ignorecase = true
 
 vim.keymap.set("n", "<leader>f", vim.cmd.Ex, { desc = "Open netrw explorer" })
 vim.keymap.set("n", "<leader>+", vim.cmd.noh, { desc = "removes hilighting" })
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
 
 -- Bootstrap lazy.nvim plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -74,4 +77,6 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.keymap.set("n", "<BS>", "<C-o>", { buffer = true, desc = "Go back to previous file" })
   end,
 })
+
+vim.api.nvim_set_hl(0, "IblIndent", { fg = "#3B4252" }) -- Dark Nord grey
 
