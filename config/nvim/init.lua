@@ -16,14 +16,13 @@ vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.scrolloff = 10
+vim.opt.hlsearch = false
 vim.opt.expandtab = true
 vim.opt.wrap = false
 vim.opt.ignorecase = true
 vim.opt.smartindent = true
 
-vim.keymap.set("n", "<leader>f", vim.cmd.Ex, { desc = "Open netrw explorer" })
-vim.keymap.set("n", "<leader>+", vim.cmd.noh, { desc = "removes hilighting" })
-vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+vim.keymap.set("n", "<leader>fe", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
@@ -83,3 +82,6 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.api.nvim_set_hl(0, "IblIndent", { fg = "#3B4252" }) -- Dark Nord grey
 
+require("oil").setup ({
+  skip_config_for_simple_edits = true
+})
