@@ -64,6 +64,15 @@ prompt, entry, element-text, element-icon {
     padding: 10px;
 }
 
+element {
+  children: [ "element-icon", "element-text" ];
+  spacing: 10px;
+}
+
+element-icon {  
+  size: 64px;
+}
+
 prompt {
     text-color: @accent-color;
 }

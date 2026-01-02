@@ -16,9 +16,9 @@ vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.expandtab = true
-vim.opt.autoindent = true
 vim.opt.wrap = false
 vim.opt.ignorecase = true
+vim.opt.smartindent = true
 
 vim.keymap.set("n", "<leader>f", vim.cmd.Ex, { desc = "Open netrw explorer" })
 vim.keymap.set("n", "<leader>+", vim.cmd.noh, { desc = "removes hilighting" })
