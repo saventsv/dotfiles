@@ -20,7 +20,8 @@ vim.opt.hlsearch = false
 vim.opt.expandtab = true
 vim.opt.wrap = false
 vim.opt.ignorecase = true
-vim.opt.smartindent = true
+vim.opt.iskeyword:remove("-")
+vim.opt.iskeyword:remove("_")
 
 vim.keymap.set("n", "<leader>fe", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
@@ -83,5 +84,5 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_set_hl(0, "IblIndent", { fg = "#3B4252" }) -- Dark Nord grey
 
 require("oil").setup ({
-  skip_config_for_simple_edits = true
+  skip_confirm_for_simple_edits = true
 })
