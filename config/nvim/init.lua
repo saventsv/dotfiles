@@ -5,7 +5,6 @@ vim.g.loaded_netrw = 1
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
-    -- Maps <CR> (Enter) to the gx action specifically in markdown buffers
     vim.keymap.set("n", "<CR>", "<cmd>Browse<cr>", { buffer = true, desc = "gx.nvim: Open link" })
   end,
 })
@@ -20,15 +19,29 @@ vim.opt.hlsearch = false
 vim.opt.expandtab = true
 vim.opt.wrap = false
 vim.opt.ignorecase = true
-vim.opt.iskeyword:remove("-")
-vim.opt.iskeyword:remove("_")
+vim.opt.termguicolors = true
+vim.opt.iskeyword:remove({ "_", "-" })
+
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank({
+      higroup = 'IncSearch', 
+      timeout = 75,        
+    })
+  end,
+})
+
 
 vim.keymap.set("n", "<leader>fe", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+vim.keymap.set("n", "<leader>q", "<CMD>wq<CR>")
+vim.keymap.set("n", "<leader>w", "<CMD>w<CR>")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
 
--- Bootstrap lazy.nvim plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -36,22 +49,14 @@ if not vim.loop.fs_stat(lazypath) then
     "clone",
     "--filter=blob:none",
     "--url=github.com",
-    "--branch=stable", -- latest stable release
+    "--branch=stable", 
     lazypath,
   })
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Load plugins defined in the lua/plugins directory
 require("lazy").setup("plugins")
 
-
-
--- Source the keymaps file
-
--- ... (rest of your init.lua file content) ...
-
--- Make sure the main background and floating windows are transparent
 vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'none' })
@@ -81,8 +86,9 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.api.nvim_set_hl(0, "IblIndent", { fg = "#3B4252" }) -- Dark Nord grey
+vim.api.nvim_set_hl(0, "IblIndent", { fg = "#3B4252" }) 
 
 require("oil").setup ({
   skip_confirm_for_simple_edits = true
 })
+
