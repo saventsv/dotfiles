@@ -20,7 +20,7 @@
 
 - note this is the needed stuff for if you installed hyprland with the archinstall script
 ```bash
-sudo pacman -S fzf yazi kitty nvim rofi-wayland waybar
+sudo pacman -S fzf yazi nvim rofi-wayland waybar
 ```
 
 ## Setup
