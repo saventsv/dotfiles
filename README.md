@@ -1,4 +1,4 @@
-# dotfiles 
+# Dotfiles 
 
 ## Needed Programs
 
