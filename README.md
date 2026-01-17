@@ -25,7 +25,7 @@ sudo pacman -S fzf yazi nvim rofi-wayland waybar
 
 ## Setup
 
-* ==for bash just copy the config and don't do a symlink to avoid a broken system==
+* **for bash just copy the config and don't do a symlink to avoid a broken system**
 
 - for config dirs that don't exist yet
 ```bash
