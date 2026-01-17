@@ -25,6 +25,8 @@ sudo pacman -S fzf yazi kitty nvim rofi-wayland waybar
 
 ## Setup
 
+* ==for bash just copy the config and don't do a symlink to avoid a broken system==
+
 - for config dirs that don't exist yet
 ```bash
 ln -s ~/.config/wanted-config ~/destination
@@ -49,4 +51,6 @@ sudo nvim /etc/sddm.conf
 [Theme]
 Current=nord-sddm
 ```
+
+- for bash just copy the config to avoid a broken config when screwing around with symlinks
 
