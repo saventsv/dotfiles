@@ -15,6 +15,9 @@ alias r='sudo pacman -Rcns'
 alias ar='yay -Rns'
 alias s='pacman -Ss'
 alias as='yay -Ss'
+alias au='yay -Syu'
+alias u='sudo pacman -Syu'
+alias cman='man 3'
 PS1='[\u@\h \W]\$ '
 PS1='\u@\h (\A) [\W] 󰣇 '
 
@@ -50,3 +53,5 @@ bind -x '"\C-n": n'
 bind -x '"\C-y": y'
 
 export EDITOR=nvim
+export MANPAGER='nvim +Man!'
+

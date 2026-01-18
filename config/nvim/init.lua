@@ -40,6 +40,7 @@ vim.keymap.set("n", "<leader>q", "<CMD>wq<CR>")
 vim.keymap.set("n", "<leader>w", "<CMD>w<CR>")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-s>", "<CMD>w<CR>")
 
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -58,8 +59,6 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup("plugins")
 
 vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'Pmenu', { bg = 'none' })
 
 vim.api.nvim_create_autocmd("FileType", {
@@ -69,6 +68,8 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.suffixesadd:append(".md")
   end,
 })
+
+require("terminal")
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
