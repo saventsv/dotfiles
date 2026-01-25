@@ -21,7 +21,7 @@
 
 - note this is the needed stuff for if you installed hyprland with the archinstall script
 ```bash
-sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij
+sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij swww
 ```
 
 ## Setup
@@ -54,4 +54,14 @@ Current=nord-sddm
 ```
 
 - for bash just copy the config to avoid a broken config when screwing around with symlinks
+
+- for sww run 
+```bash
+swww-daemon
+```
+- and then
+```bash
+swww img /path/to/your/image.png
+```
+- (sww it already put in the hyprland config to start on boot)
 

@@ -16,10 +16,9 @@ keybinds clear-defaults=true {
     bind "Alt 1" { GoToTab 1; }
     bind "Alt 2" { GoToTab 2; }
     bind "Alt 3" { GoToTab 3; }
-    bind "Alt n" { NewPane; }
+    bind "Alt Enter" { NewPane; }
     bind "Alt q" { CloseFocus; }
     bind "Alt w" { CloseTab; }
-    bind "Ctrl t" { NewTab; }
     bind "Ctrl t" { NewTab; }
   }
   normal {
@@ -37,7 +36,7 @@ keybinds clear-defaults=true {
     bind "Alt k" { MoveFocus "up"; }
     bind "Alt l" { MoveFocus "right"; }
     bind "Alt d" { Detach; }
-    bind "Alt a" { 
+    bind "Alt n" { 
       MessagePlugin "autolock" { payload "toggle"; }; 
       SwitchToMode "Normal"; 
     }

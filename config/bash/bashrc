@@ -21,6 +21,7 @@ alias cman='man 3'
 alias b='cd ..'
 alias ve="source .venv/bin/activate"
 alias quick-note="todo quick-note"
+alias check="todo check-note"
 alias note="todo list-todo"
 alias add-todo="todo add-todo"
 PS1='[\u@\h \W]\$ '
