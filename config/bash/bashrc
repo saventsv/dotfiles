@@ -18,6 +18,11 @@ alias as='yay -Ss'
 alias au='yay -Syu'
 alias u='sudo pacman -Syu'
 alias cman='man 3'
+alias b='cd ..'
+alias ve="source .venv/bin/activate"
+alias quick-note="todo quick-note"
+alias note="todo list-todo"
+alias add-todo="todo add-todo"
 PS1='[\u@\h \W]\$ '
 PS1='\u@\h (\A) [\W] 󰣇 '
 
@@ -48,10 +53,31 @@ f() {
 }
 
 
+
 bind '"\C-f": "\C-uf\C-m"'
 bind -x '"\C-n": n'
 bind -x '"\C-y": y'
+bind -x '"\C-o": quick-note'
+bind -x '"\C-e": note'
+bind -x '"\C-g": add-todo'
 
 export EDITOR=nvim
 export MANPAGER='nvim +Man!'
+
+export ZELLIJ_CONFIG_DIR="$HOME/.config/dotfiles/config/zellij"
+
+if [[ -z "$ZELLIJ" ]]; then
+    if command -v zellij >/dev/null 2>&1; then
+      zellij --session "fresh-$(date +%s)"
+    fi
+fi
+
+# pnpm
+export PNPM_HOME="/home/saven/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+. "$HOME/.local/bin/env"
 

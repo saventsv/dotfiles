@@ -9,6 +9,9 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+
+
+
 vim.opt.number = true
 vim.opt.rnu = true
 vim.opt.shiftwidth = 2
@@ -35,12 +38,23 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 
-vim.keymap.set("n", "<leader>fe", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+vim.keymap.set("n", "<C-m>", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<leader>q", "<CMD>wq<CR>")
 vim.keymap.set("n", "<leader>w", "<CMD>w<CR>")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-s>", "<CMD>w<CR>")
+vim.keymap.set("i", "<C-e>", "<C-o>$")
+vim.keymap.set("n", "<C-l>", "<CMD>LivePreview start<CR>")
+vim.keymap.set("n", "<leader>l", "<CMD>LivePreview close<CR>")
+vim.keymap.set({ "n", "v" }, "<C-y>", '"+y')
+vim.keymap.set({ "n", "v" }, "<C-v>", '"+p')
+vim.keymap.set("i", "<C-v>", "<C-r>+")
+vim.keymap.set('n', '<leader>rc', ':RemoveComments<CR>', { 
+      desc = 'Remove all comments from buffer', 
+      silent = true 
+})
+
 
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -88,6 +102,18 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_set_hl(0, "IblIndent", { fg = "#3B4252" }) 
+
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    local opts = { buffer = args.buf }
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+    vim.keymap.set({'n', 'v'}, '<leader>ca', vim.lsp.buf.code_action, opts)
+  end,
+})
+
 
 require("oil").setup ({
   skip_confirm_for_simple_edits = true

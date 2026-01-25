@@ -1,0 +1,34 @@
+theme "nord"
+default_layout "compact" 
+pane_frames false
+mouse_mode true
+copy_on_select true
+on_force_close "detach"
+
+show_help_hints false
+
+keybinds clear-defaults=true {
+    normal {
+        bind "Alt n" { NewPane; }
+        bind "Alt q" { CloseFocus; }
+        bind "Alt h" { MoveFocus "Left"; }
+        bind "Alt l" { MoveFocus "Right"; }
+        bind "Alt j" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Up"; }
+        bind "Alt f" { ToggleFloatingPanes; } 
+
+        bind "Alt t" { NewTab; }
+        bind "Alt Shift 1" { GoToTab 1; }
+        bind "Alt Shift 2" { GoToTab 2; }
+        bind "Alt Shift 3" { GoToTab 3; }
+        
+        bind "Alt d" { Detach; }
+        bind "Alt s" { 
+            LaunchOrFocusPlugin "zellij:session-manager" {
+                floating true
+                move_to_focused_pane true
+            }; 
+            SwitchToMode "Normal";
+        }
+    }
+}

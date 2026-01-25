@@ -1,14 +1,12 @@
 return {
   {
     'Saghen/blink.cmp',
-    version = '*', -- Use latest stable release
+    version = '*', 
     dependencies = 'rafamadriz/friendly-snippets',
 
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
-      -- Change preset to 'enter' to use the Return key for accepting
-      -- This also keeps C-y working as a fallback
       keymap = { 
         preset = 'enter',
       },
@@ -16,13 +14,9 @@ return {
       completion = {
         list = {
           selection = {
-            -- Set to 'manual' if you don't want the first item auto-selected
-            -- Set to 'preselect' (default) if you want Enter to immediately 
-            -- accept the top suggestion without hitting arrow keys first
             preselect = true, 
           }
         },
-        -- Enable signature help for Python/JS parameter hints
         menu = { auto_show = true },
       },
 

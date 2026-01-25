@@ -10,6 +10,7 @@
 - rofi-wayland
 - sddm 
 - waybar
+- zellij
 
 ## Pulling Dotfiles
 
@@ -20,7 +21,7 @@
 
 - note this is the needed stuff for if you installed hyprland with the archinstall script
 ```bash
-sudo pacman -S fzf yazi nvim rofi-wayland waybar
+sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij
 ```
 
 ## Setup
@@ -29,11 +30,11 @@ sudo pacman -S fzf yazi nvim rofi-wayland waybar
 
 - for config dirs that don't exist yet
 ```bash
-ln -s ~/.config/wanted-config ~/destination
+ln -s ~/path/to/git/dotfiles ~/.config/config
 ```
 - for config dirs that do exist
 ```bash
-ln -sf ~/.config/wanted-config ~/destination
+ln -sfn ~/path/to/git/dotfiles ~/.config/config
 ```
 - repeat for all of the config files 
 

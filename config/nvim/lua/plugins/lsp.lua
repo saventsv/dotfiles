@@ -1,4 +1,3 @@
-
 return {
   {
     "neovim/nvim-lspconfig",
@@ -6,19 +5,27 @@ return {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
       "saghen/blink.cmp",
+      { "folke/lazydev.nvim", ft = "lua", opts = {} }, 
     },
     config = function()
       require("mason").setup()
-
       require("mason-lspconfig").setup({
-        ensure_installed = { "pyright", "html", "cssls", "ts_ls", "lua_ls", "clangd" },
-        automatic_installation = true,
+        ensure_installed = {"html", "cssls", "ts_ls", "lua_ls", "clangd" },
       })
 
       local blink = require('blink.cmp')
+
       vim.lsp.config('*', {
         capabilities = blink.get_lsp_capabilities()
       })
+      vim.lsp.config('lua_ls', {
+        settings = {
+          Lua = {
+            completion = { callSnippet = "Replace" },
+          }
+        }
+      })
+      vim.lsp.enable({"html", "cssls", "ts_ls", "lua_ls", "clangd"})
 
       vim.api.nvim_create_autocmd('LspAttach', {
         callback = function(event)
