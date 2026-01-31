@@ -24,6 +24,10 @@ alias quick-note="todo quick-note"
 alias check="todo check-note"
 alias note="todo list-todo"
 alias add-todo="todo add-todo"
+alias view="kitty +kitten icat"
+alias ga="git add -A"
+alias gc="git commit -m"
+alias push="git push origin main"
 PS1='[\u@\h \W]\$ '
 PS1='\u@\h (\A) [\W] 󰣇 '
 
@@ -60,7 +64,9 @@ bind -x '"\C-n": n'
 bind -x '"\C-y": y'
 bind -x '"\C-o": quick-note'
 bind -x '"\C-e": note'
-bind -x '"\C-g": add-todo'
+bind -x '"\C-g": check'
+bind '"\ef":"jump\n"'
+bind '"\er":"qj jump-files\n"'
 
 export EDITOR=nvim
 export MANPAGER='nvim +Man!'
@@ -73,6 +79,20 @@ if [[ -z "$ZELLIJ" ]]; then
     fi
 fi
 
+jump() {
+    local DEST
+    if [[ "$1" == "add" ]]; then
+        qj add "$2" "${3:-.}"
+        return
+    fi
+    DEST=$(qj jump-dirs "$@")
+    if [[ $? -eq 0 && -n "$DEST" ]]; then
+        cd "$DEST"
+    else
+        return 1
+    fi
+}
+
 # pnpm
 export PNPM_HOME="/home/saven/.local/share/pnpm"
 case ":$PATH:" in
@@ -81,4 +101,3 @@ case ":$PATH:" in
 esac
 # pnpm end
 . "$HOME/.local/bin/env"
-

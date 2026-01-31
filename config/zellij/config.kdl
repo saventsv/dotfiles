@@ -5,6 +5,7 @@
 
 theme "custom-theme"
 
+
 option{
   on_force_close "detach"
   session_serialization false
@@ -36,7 +37,7 @@ keybinds clear-defaults=true {
     bind "Alt k" { MoveFocus "up"; }
     bind "Alt l" { MoveFocus "right"; }
     bind "Alt d" { Detach; }
-    bind "Alt n" { 
+    bind "Alt e" { 
       MessagePlugin "autolock" { payload "toggle"; }; 
       SwitchToMode "Normal"; 
     }

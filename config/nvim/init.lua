@@ -48,12 +48,13 @@ vim.keymap.set("i", "<C-e>", "<C-o>$")
 vim.keymap.set("n", "<C-l>", "<CMD>LivePreview start<CR>")
 vim.keymap.set("n", "<leader>l", "<CMD>LivePreview close<CR>")
 vim.keymap.set({ "n", "v" }, "<C-y>", '"+y')
-vim.keymap.set({ "n", "v" }, "<C-v>", '"+p')
+vim.keymap.set({ "n", "v" }, "<C-v>", ':set paste<CR>"+p:set nopaste<CR>', { silent = true })
 vim.keymap.set("i", "<C-v>", "<C-r>+")
 vim.keymap.set('n', '<leader>rc', ':RemoveComments<CR>', { 
       desc = 'Remove all comments from buffer', 
       silent = true 
 })
+vim.keymap.set("i", "<C-v>", '<C-o>:set paste<CR><C-r>+<C-o>:set nopaste<CR>', { silent = true })
 
 
 
