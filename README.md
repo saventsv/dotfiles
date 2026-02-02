@@ -11,6 +11,7 @@
 - sddm 
 - waybar
 - zellij
+- starship
 
 ## Pulling Dotfiles
 
@@ -21,7 +22,7 @@
 
 - note this is the needed stuff for if you installed hyprland with the archinstall script
 ```bash
-sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij swww
+sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij swww starship
 ```
 
 ## Setup
