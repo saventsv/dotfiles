@@ -1,0 +1,45 @@
+add_newline = false
+
+format = """
+$python\
+$username\
+$hostname\
+$time\
+$directory\
+$git_branch\
+$character"""
+
+[username]
+style_user = "#5e81ac"
+format = "[$user]($style)"
+show_always = true
+
+[hostname]
+ssh_only = false
+format = "[@](#88c0d0)[$hostname](#5e81ac) "
+
+[time]
+disabled = false
+# Use \( and \) to force them to show up in Nord Green
+format = "[\\($time\\)](#a3be8c) " 
+time_format = "%I:%M%P"
+
+[directory]
+style = "#ebcb8b"
+truncation_length = 1
+format = "[\\[$path\\]]($style) "
+
+[git_branch]
+symbol = "" 
+style = "#a3be8c"
+# Use \( and \) here as well
+format = "[\\($branch $symbol\\)]($style) "
+
+[python]
+symbol = "󰆧"
+style = "#a3be8c"
+format = "[\\($symbol$virtualenv\\)]($style) "
+
+[character]
+success_symbol = "[󰣇](#5e81ac) "
+error_symbol = "[󰣇](#bf616a) "
