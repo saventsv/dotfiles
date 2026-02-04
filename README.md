@@ -22,7 +22,11 @@
 
 - note this is the needed stuff for if you installed hyprland with the archinstall script
 ```bash
-sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij swww starship
+sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij swww starship zsh-autosuggestions zsh-syntax-highlighting
+```
+- then you have to install yay and run
+```bash
+yay -S zen-browser-bin zsh-abbr
 ```
 
 ## Setup

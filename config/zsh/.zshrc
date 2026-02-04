@@ -23,13 +23,13 @@ alias u='sudo pacman -Syu'
 alias cman='man 3'
 alias b='cd ..'
 alias ve="source .venv/bin/activate"
+alias d="deactivate"
 alias quick-note="todo quick-note"
 alias check="todo check-note"
 alias note="todo list-todo"
 alias add-todo="todo add-todo"
 alias view="kitty +kitten icat"
 alias ga="git add -A"
-alias gc="git commit -m"
 alias push="git push origin main"
 alias sz="source home/saven/.config/dotfiles/config/zsh/zshrc"
 export LS_COLORS="di=38;5;110:ln=38;5;109:so=38;5;111:pi=38;5;111:ex=38;5;143:bd=38;5;110:cd=38;5;110:or=38;5;167:mi=38;5;167:ow=38;5;110:tw=38;5;110:"
@@ -79,8 +79,12 @@ zstyle ':vcs_info:git:*' formats '%F{$nord_green}%b%f'
 # --- 5. SYNTAX HIGHLIGHTING & SUGGESTIONS ---
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# 1. Source the plugin FIRST
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+export ABBR_QUIETER=1
+source /usr/share/zsh/plugins/zsh-abbr/zsh-abbr.zsh
+
+ABBR_SET_EXPANSION_CURSOR=1
+abbr add gc='git commit -m "%"'
 
 ZSH_HIGHLIGHT_STYLES[main:command]='fg=#88c0d0'
 ZSH_HIGHLIGHT_STYLES[main:alias]='fg=#88c0d0'
@@ -102,8 +106,6 @@ bindkey '^ ' autosuggest-accept
 [[ -f ~/.zsh/fzf-tab/fzf-tab.zsh ]] && source ~/.zsh/fzf-tab/fzf-tab.zsh
 zstyle ':fzf-tab:*' fzf-flags "--color=bg+:#3b4252,bg:#2e3440,spinner:#81a1c1,hl:#616e88,fg:#d8dee9,header:#616e88,info:#b48ead,pointer:#81a1c1,marker:#81a1c1,fg+:#eceff4,prompt:#81a1c1,hl+:#81a1c1"
 
-# --- 7. THE PROMPT ---
-# (venv) user @ host (time) [dir] branch glyph
 
 
 setopt PROMPT_SUBST
