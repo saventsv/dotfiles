@@ -32,6 +32,13 @@ keybinds clear-defaults=true {
     bind "Alt 2" { GoToTab 2; }
     bind "Alt 3" { GoToTab 3; }
     bind "Alt Enter" { NewPane; }
+    bind "Alt m" {
+      Run "zellij" "action" "new-pane" "--floating"{
+        floating true
+        close_on_exit true
+      }
+      SwitchToMode "Normal"
+    }
     bind "Alt q" { CloseFocus; }
     bind "Alt w" { CloseTab; }
     bind "Ctrl t" { NewTab; }
@@ -62,22 +69,22 @@ keybinds clear-defaults=true {
 // changing these requires a restart to take effect
 plugins {
   autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
-  triggers "nvim|vim|git|fzf|zoxide|atuin|helix"
-  is_enabled true
-  about location="zellij:about"
-  compact-bar location="zellij:compact-bar"
-  configuration location="zellij:configuration"
-  filepicker location="zellij:strider" {
-    cwd "/"
-  }
-  plugin-manager location="zellij:plugin-manager"
-  session-manager location="zellij:session-manager"
-  status-bar location="zellij:status-bar"
-  strider location="zellij:strider"
-  tab-bar location="zellij:tab-bar"
-  welcome-screen location="zellij:session-manager" {
-    welcome_screen true
-  }
+    triggers "nvim|vim|git|fzf|zoxide|atuin|helix"
+    is_enabled true
+    about location="zellij:about"
+    compact-bar location="zellij:compact-bar"
+    configuration location="zellij:configuration"
+    filepicker location="zellij:strider" {
+      cwd "/"
+    }
+    plugin-manager location="zellij:plugin-manager"
+    session-manager location="zellij:session-manager"
+    status-bar location="zellij:status-bar"
+    strider location="zellij:strider"
+    tab-bar location="zellij:tab-bar"
+    welcome-screen location="zellij:session-manager" {
+      welcome_screen true
+    }
   }
 }
 load_plugins {

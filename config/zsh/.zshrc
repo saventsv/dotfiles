@@ -228,7 +228,7 @@ ZSH_HIGHLIGHT_STYLES[arg0]='fg=#d8dee9'
 ZSH_HIGHLIGHT_STYLES[path]='fg=#ebcb8b'
 ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=#ebcb8b'
 
-ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#3b4252' 
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#b48ead' 
 ZSH_HIGHLIGHT_STYLES[bracket]='fg=#eceff4'
 ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]='bg=#4c566a'
 

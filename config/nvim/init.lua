@@ -11,7 +11,6 @@ vim.api.nvim_create_autocmd("FileType", {
 
 
 
-
 vim.opt.number = true
 vim.opt.rnu = true
 vim.opt.shiftwidth = 2
@@ -55,6 +54,10 @@ vim.keymap.set('n', '<leader>rc', ':RemoveComments<CR>', {
       silent = true 
 })
 vim.keymap.set("i", "<C-v>", '<C-o>:set paste<CR><C-r>+<C-o>:set nopaste<CR>', { silent = true })
+vim.keymap.set("n", "<leader>t", "<cmd>Markview toggle<CR>", { desc = "Toggle Markview (Show/Hide Syntax)" })
+
+vim.opt.showcmd = true
+
 
 
 

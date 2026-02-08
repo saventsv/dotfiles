@@ -42,4 +42,4 @@ format = "[\\($symbol$virtualenv\\)]($style) "
 
 [character]
 success_symbol = "[󰣇](#5e81ac) "
-error_symbol = "[󰣇](#bf616a) "
+error_symbol = "[󰣇](#5e81ac) "

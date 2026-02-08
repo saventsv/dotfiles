@@ -22,7 +22,7 @@
 
 - note this is the needed stuff for if you installed hyprland with the archinstall script
 ```bash
-sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij swww starship zsh-autosuggestions zsh-syntax-highlighting
+sudo pacman -S fzf yazi nvim rofi-wayland waybar zellij swww starship zsh-autosuggestions zsh-syntax-highlighting wlogout
 ```
 - then you have to install yay and run
 ```bash
@@ -70,3 +70,7 @@ swww img /path/to/your/image.png
 ```
 - (sww it already put in the hyprland config to start on boot)
 
+- set zsh as default shell with
+```bash
+chsh -s $(which zsh)
+```

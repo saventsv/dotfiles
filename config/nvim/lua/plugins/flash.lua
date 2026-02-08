@@ -3,7 +3,7 @@ return {
   event = "VeryLazy",
   keys = {
     {
-      "<M-g>",
+      "<M-f>",
       mode = { "n", "x", "o" },
       function() require("flash").jump() end,
     },
