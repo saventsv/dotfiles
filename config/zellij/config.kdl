@@ -5,6 +5,8 @@
 
 theme "custom-theme"
 
+true_color true
+
 layout {
     default_tab_template {
         pane size=1 borderless=true {
@@ -33,7 +35,7 @@ keybinds clear-defaults=true {
     bind "Alt 3" { GoToTab 3; }
     bind "Alt Enter" { NewPane; }
     bind "Alt m" {
-      Run "zellij" "action" "new-pane" "--floating"{
+      Run "zellij" "action" "new-pane" "--floating" "--cwd" "."{
         floating true
         close_on_exit true
       }
@@ -126,3 +128,4 @@ ui {
     hide_session_name true
   }
 }
+

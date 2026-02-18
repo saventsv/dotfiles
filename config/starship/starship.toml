@@ -32,14 +32,21 @@ format = "[\\[$path\\]]($style) "
 [git_branch]
 symbol = "" 
 style = "#a3be8c"
-# Use \( and \) here as well
 format = "[\\($branch $symbol\\)]($style) "
 
-[python]
-symbol = "󰆧"
-style = "#a3be8c"
-format = "[\\($symbol$virtualenv\\)]($style) "
+# [python] 
+# symbol = "󰆧" 
+# style = "#a3be8c" 
+# format = "[\\($symbol $virtualenv\\)]($style) " 
+
+
+[python] 
+symbol = "󰆧"  
+style = "#a3be8c" 
+format = "([\\($virtualenv $symbol\\)]($style) )" 
+
 
 [character]
 success_symbol = "[󰣇](#5e81ac) "
 error_symbol = "[󰣇](#5e81ac) "
+vimcmd_symbol = "[󰣇](#5e81ac)"

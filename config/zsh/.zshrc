@@ -6,11 +6,11 @@ setopt AUTO_CD
 autoload -Uz compinit && compinit
 zstyle ':completion:*' menu select # Use arrow keys to select from tab menu
 
-
-
+export COLORTERM=truecolor
+export TERM=xterm-256color
 
 # Aliases (Same as Bash)
-alias ll='ls -la'
+alias ll='eza -lh --icons --git --group-directories-first --color=always'
 alias n='nvim'
 alias i='sudo pacman -S'
 alias a='yay -S'
@@ -30,12 +30,40 @@ alias note="todo list-todo"
 alias add-todo="todo add-todo"
 alias view="kitty +kitten icat"
 alias ga="git add -A"
+alias gs="git status"
 alias push="git push origin main"
-alias sz="source home/saven/.config/dotfiles/config/zsh/zshrc"
+alias sz="source /home/saven/.config/dotfiles/config/zsh/zshrc"
+alias quick="quick-check"
 export LS_COLORS="di=38;5;110:ln=38;5;109:so=38;5;111:pi=38;5;111:ex=38;5;143:bd=38;5;110:cd=38;5;110:or=38;5;167:mi=38;5;167:ow=38;5;110:tw=38;5;110:"
 
-alias ls='ls --color=auto'
+alias ls='exa --icons --git --group-directories-first --color=always'
 alias grep='grep --color=auto'
+
+export COLORTERM=truecolor
+
+if command -v vivid >/dev/null 2>&1; then
+    export LS_COLORS="$(vivid generate nord)"
+    export EZA_COLORS="reset" 
+fi
+
+export EZA_COLORS="ur=32:uw=32:ux=32:sn=33:sb=33:da=34:uu=37:gu=37:hd=1;34:xx=38;2;216;222;233"
+
+auto_ls_nord() {
+    if [[ -r $PWD ]]; then
+        eza --icons --git --group-directories-first --color=always
+    fi
+}
+
+autoload -U add-zsh-hook
+add-zsh-hook chpwd auto_ls_nord
+
+autoload -U add-zsh-hook
+
+# Auto-ls when changing directories
+# chpwd() { 
+    # emulate -L zsh 
+    # ls  --color=auto  
+# } 
 
 
 PROMPT='%n@%m (%D{%k:%M}) [%1~] 󰣇 '
@@ -56,7 +84,6 @@ precmd() { vcs_info }
 # --- 2. CORE SETTINGS ---
 setopt PROMPT_SUBST
 autoload -U compinit; compinit
-bindkey -v
 export KEYTIMEOUT=1
 
 # --- 3. CURSOR MODE SWITCHING (Block/Line) ---
@@ -127,7 +154,7 @@ f() {
     -type d -print 2> /dev/null | fzf +m) && cd "$dir"
 }
 
-jump() {
+j() {
     local DEST
     if [[ "$1" == "add" ]]; then
         qj add "$2" "${3:-.}"
@@ -150,7 +177,7 @@ eval "$(fzf --zsh)"
 # Keybindings (Zsh bindkey)
 # \C = Ctrl, \e = Alt (Escape)
 bindkey -s '^f' 'f\n'            # Ctrl-f runs f command
-bindkey -s '\ef' 'jump\n'        # Alt-f runs jump
+bindkey -s '\ef' 'j\n'        # Alt-f runs jump
 bindkey -s '\er' 'qj jump-files\n' # Alt-r runs qj
 
 # ZLE Widgets for "bind -x" equivalents
@@ -163,6 +190,7 @@ function zle-check() { check; zle reset-prompt }; zle -N zle-check; bindkey '^g'
 
 # Exports
 export EDITOR=nvim
+export NOTES_DIR="/home/saven/Notes/"
 export MANPAGER='nvim +Man!'
 export ZELLIJ_CONFIG_DIR="$HOME/.config/dotfiles/config/zellij"
 
@@ -181,6 +209,23 @@ case ":$PATH:" in
 esac
 
 bindkey -v
+
+
+
+export KEYTIMEOUT=1              # Removes the lag when hitting ESC
+
+# --- 2. CURSOR VISUAL FEEDBACK ---
+# Changes cursor to 'Bar' for Insert and 'Block' for Normal
+function zle-keymap-select {
+  case $KEYMAP in
+    vicmd)      echo -ne '\e[2 q' ;; # Block
+    viins|main) echo -ne '\e[5 q' ;; # Beam
+  esac
+}
+zle -N zle-keymap-select
+_fix_cursor() { echo -ne '\e[5 q' }
+precmd_functions+=(_fix_cursor)
+
 
 function zle-keymap-select {
   if [[ $KEYMAP == vicmd ]]; then
@@ -201,14 +246,25 @@ export KEYTIMEOUT=1
 # Source local bins
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+_zsh_autosuggest_strategy_valid_command() {
+    local suggestion=$1
+    local cmd=${suggestion%% *} 
+    if (( $+commands[$cmd] || $+aliases[$cmd] || $+functions[$cmd] )); then
+        typeset -g suggestion=$suggestion
+    else
+        unset suggestion
+    fi
+}
+
+
+export ZSH_AUTOSUGGEST_STRATEGY=(history completion valid_command)
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 export ZSH_AUTOSUGGEST_MIN_BUFFER_SIZE=2
 ZSH_AUTOSUGGEST_COMPLETION_IGNORE='(|.*)' 
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*:*' completer _complete _ignored _approximate
 
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
 ZSH_HIGHLIGHT_STYLES[command]='fg=#81a1c1'
@@ -233,6 +289,9 @@ ZSH_HIGHLIGHT_STYLES[bracket]='fg=#eceff4'
 ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]='bg=#4c566a'
 
 
+autoload -U predict-on
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 
+zstyle ':completion:*' list-grouped true
 
 source ~/.zsh/fzf-tab/fzf-tab.zsh
 
@@ -245,3 +304,5 @@ bindkey '^ ' autosuggest-accept
 
 
 eval "$(starship init zsh)"
+
+export PATH="$HOME/.cargo/bin:$PATH"
