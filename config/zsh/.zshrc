@@ -34,7 +34,6 @@ alias gs="git status"
 alias push="git push origin main"
 alias sz="source /home/saven/.config/dotfiles/config/zsh/zshrc"
 alias quick="quick-check"
-export LS_COLORS="di=38;5;110:ln=38;5;109:so=38;5;111:pi=38;5;111:ex=38;5;143:bd=38;5;110:cd=38;5;110:or=38;5;167:mi=38;5;167:ow=38;5;110:tw=38;5;110:"
 
 alias ls='exa --icons --git --group-directories-first --color=always'
 alias grep='grep --color=auto'
@@ -46,7 +45,14 @@ if command -v vivid >/dev/null 2>&1; then
     export EZA_COLORS="reset" 
 fi
 
-export EZA_COLORS="ur=32:uw=32:ux=32:sn=33:sb=33:da=34:uu=37:gu=37:hd=1;34:xx=38;2;216;222;233"
+export EZA_COLORS="\
+ur=38;2;163;190;140:uw=38;2;163;190;140:ux=38;2;191;97;106:\
+sn=38;2;235;203;139:sb=38;2;235;203;139:\
+da=38;2;94;129;172:\
+uu=38;2;235;203;139:gu=38;2;235;203;139:\
+ln=38;2;136;192;208:lp=38;2;136;192;208:lc=38;2;136;192;208:xx=38;2;136;192;208:\
+or=38;2;191;97;106:\
+hd=1;38;2;94;129;172"
 
 auto_ls_nord() {
     if [[ -r $PWD ]]; then
