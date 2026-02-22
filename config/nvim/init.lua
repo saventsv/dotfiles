@@ -12,6 +12,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.opt.number = true
 vim.opt.rnu = true
+vim.opt.cursorline = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
@@ -22,6 +23,17 @@ vim.opt.wrap = false
 vim.opt.ignorecase = true
 vim.opt.termguicolors = true
 vim.opt.iskeyword:remove({ "_", "-" })
+vim.opt.swapfile = false
+vim.opt.autoread = true
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "rust",
+  callback = function()
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.tabstop = 2
+    vim.opt_local.expandtab = true
+  end,
+})
 
 
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -55,6 +67,21 @@ vim.keymap.set('n', '<leader>rc', ':RemoveComments<CR>', {
 vim.keymap.set("i", "<C-v>", '<C-o>:set paste<CR><C-r>+<C-o>:set nopaste<CR>', { silent = true })
 vim.keymap.set("n", "<leader>t", "<cmd>Markview toggle<CR>", { desc = "Toggle Markview (Show/Hide Syntax)" })
 vim.keymap.set('i', '<C-Backspace>', '<C-W>', { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>mc", ":delmarks! | delmarks A-Z0-9<CR>", { 
+    desc = "Clear all marks" 
+})
+
+for i = 97, 122 do
+  local char = string.char(i)
+  vim.keymap.set("n", "'" .. char, "'" .. char .. "zz")
+  vim.keymap.set("n", "`" .. char, "`" .. char .. "zz")
+end
+
+for i = 65, 90 do
+  local char = string.char(i)
+  vim.keymap.set("n", "'" .. char, "'" .. char .. "zz")
+  vim.keymap.set("n", "`" .. char, "`" .. char .. "zz")
+end
 
 
 vim.opt.showcmd = true
@@ -68,8 +95,8 @@ if not vim.loop.fs_stat(lazypath) then
     "git",
     "clone",
     "--filter=blob:none",
-    "--url=github.com",
-    "--branch=stable", 
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
     lazypath,
   })
 end
@@ -124,3 +151,9 @@ require("oil").setup ({
   skip_confirm_for_simple_edits = true
 })
 
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = function()
+    vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ff9e64", bold = true })
+  end,
+})

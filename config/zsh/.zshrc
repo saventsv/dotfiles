@@ -1,15 +1,13 @@
 # ~/.zshrc
 
-# Basic Zsh shell options
 setopt interactive_comments
 setopt AUTO_CD
 autoload -Uz compinit && compinit
-zstyle ':completion:*' menu select # Use arrow keys to select from tab menu
+zstyle ':completion:*' menu select 
 
 export COLORTERM=truecolor
 export TERM=xterm-256color
 
-# Aliases (Same as Bash)
 alias ll='eza -lh --icons --git --group-directories-first --color=always'
 alias n='nvim'
 alias i='sudo pacman -S'
@@ -54,62 +52,35 @@ ln=38;2;136;192;208:lp=38;2;136;192;208:lc=38;2;136;192;208:xx=38;2;136;192;208:
 or=38;2;191;97;106:\
 hd=1;38;2;94;129;172"
 
-auto_ls_nord() {
-    if [[ -r $PWD ]]; then
-        eza --icons --git --group-directories-first --color=always
-    fi
-}
-
-autoload -U add-zsh-hook
-add-zsh-hook chpwd auto_ls_nord
-
-autoload -U add-zsh-hook
-
-# Auto-ls when changing directories
-# chpwd() { 
-    # emulate -L zsh 
-    # ls  --color=auto  
-# } 
-
 
 PROMPT='%n@%m (%D{%k:%M}) [%1~] 󰣇 '
-# Colors
 
-# Ensure this is at the top of your file
 setopt PROMPT_SUBST
 
-# Define colors as plain strings (no %F inside the variable)
-#
-# 1. Standard Settings
-setopt PROMPT_SUBST
 autoload -Uz vcs_info
 precmd() { vcs_info }
 
 
 
-# --- 2. CORE SETTINGS ---
-setopt PROMPT_SUBST
 autoload -U compinit; compinit
 export KEYTIMEOUT=1
 
-# --- 3. CURSOR MODE SWITCHING (Block/Line) ---
 function zle-keymap-select {
   if [[ $KEYMAP == vicmd ]]; then
-    echo -ne '\e[2 q' # Normal: Block
+    echo -ne '\e[2 q'
   elif [[ $KEYMAP == main ]] || [[ $KEYMAP == viins ]] || [[ $KEYMAP == "" ]]; then
-    echo -ne '\e[5 q' # Insert: Blinking Line
+    echo -ne '\e[5 q' 
   fi
 }
 zle -N zle-keymap-select
 _fix_cursor() { echo -ne '\e[5 q' }
 precmd_functions+=(_fix_cursor)
 
-# --- 4. GIT CONFIG ---
 autoload -Uz vcs_info
 precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats '%F{$nord_green}%b%f'
 
-# --- 5. SYNTAX HIGHLIGHTING & SUGGESTIONS ---
+
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
@@ -133,9 +104,6 @@ ZSH_HIGHLIGHT_STYLES[main:double-hyphen-option]='fg=#81a1c1'
 
 bindkey '^ ' autosuggest-accept
 
-# --- 6. FZF-TAB MENU ---
-# Ensure fzf-tab is sourced after compinit
-# Using the manual path we setup earlier
 [[ -f ~/.zsh/fzf-tab/fzf-tab.zsh ]] && source ~/.zsh/fzf-tab/fzf-tab.zsh
 zstyle ':fzf-tab:*' fzf-flags "--color=bg+:#3b4252,bg:#2e3440,spinner:#81a1c1,hl:#616e88,fg:#d8dee9,header:#616e88,info:#b48ead,pointer:#81a1c1,marker:#81a1c1,fg+:#eceff4,prompt:#81a1c1,hl+:#81a1c1"
 
@@ -143,7 +111,6 @@ zstyle ':fzf-tab:*' fzf-flags "--color=bg+:#3b4252,bg:#2e3440,spinner:#81a1c1,hl
 
 setopt PROMPT_SUBST
 
-# Functions
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
 	yazi "$@" --cwd-file="$tmp"
@@ -174,40 +141,31 @@ j() {
     fi
 }
 
-# FZF Setup (Zsh specific)
 eval "$(fzf --zsh)"
-# Source Zsh-specific keybindings (Adjust path if needed, usually in /usr/share/fzf/)
 [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
 
-# Keybindings (Zsh bindkey)
-# \C = Ctrl, \e = Alt (Escape)
-bindkey -s '^f' 'f\n'            # Ctrl-f runs f command
-bindkey -s '\ef' 'j\n'        # Alt-f runs jump
-bindkey -s '\er' 'qj jump-files\n' # Alt-r runs qj
+bindkey -s '^f' 'f\n'            
+bindkey -s '\ef' 'j\n'        
+bindkey -s '\er' 'qj jump-files\n' 
 
-# ZLE Widgets for "bind -x" equivalents
-# This allows running functions/commands via hotkey
 function zle-n() { n; zle reset-prompt }; zle -N zle-n; bindkey '^n' zle-n
 function zle-y() { y; zle reset-prompt }; zle -N zle-y; bindkey '^y' zle-y
 function zle-quick-note() { quick-note; zle reset-prompt }; zle -N zle-quick-note; bindkey '^o' zle-quick-note
 function zle-note() { note; zle reset-prompt }; zle -N zle-note; bindkey '^e' zle-note
 function zle-check() { check; zle reset-prompt }; zle -N zle-check; bindkey '^g' zle-check
 
-# Exports
 export EDITOR=nvim
 export NOTES_DIR="/home/saven/Notes/"
 export MANPAGER='nvim +Man!'
 export ZELLIJ_CONFIG_DIR="$HOME/.config/dotfiles/config/zellij"
 
-# Auto-start Zellij
 if [[ -z "$ZELLIJ" ]]; then
     if command -v zellij >/dev/null 2>&1; then
       zellij --session "fresh-$(date +%s)"
     fi
 fi
 
-# pnpm
 export PNPM_HOME="/home/saven/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
@@ -218,14 +176,12 @@ bindkey -v
 
 
 
-export KEYTIMEOUT=1              # Removes the lag when hitting ESC
+export KEYTIMEOUT=1
 
-# --- 2. CURSOR VISUAL FEEDBACK ---
-# Changes cursor to 'Bar' for Insert and 'Block' for Normal
 function zle-keymap-select {
   case $KEYMAP in
-    vicmd)      echo -ne '\e[2 q' ;; # Block
-    viins|main) echo -ne '\e[5 q' ;; # Beam
+    vicmd)      echo -ne '\e[2 q' ;; 
+    viins|main) echo -ne '\e[5 q' ;; 
   esac
 }
 zle -N zle-keymap-select
@@ -235,21 +191,18 @@ precmd_functions+=(_fix_cursor)
 
 function zle-keymap-select {
   if [[ $KEYMAP == vicmd ]]; then
-    echo -ne '\e[2 q' # Block cursor for Normal Mode
+    echo -ne '\e[2 q' 
   elif [[ $KEYMAP == main ]] || [[ $KEYMAP == viins ]] || [[ $KEYMAP == "" ]]; then
-    echo -ne '\e[5 q' # Blinking line for Insert Mode
+    echo -ne '\e[5 q'
   fi
 }
 zle -N zle-keymap-select
 
-# 3. Ensure the cursor starts as a line when the shell loads
 _fix_cursor() { echo -ne '\e[5 q' }
 precmd_functions+=(_fix_cursor)
 
-# 4. Optional: Faster switching (reduces the delay when hitting ESC)
 export KEYTIMEOUT=1
 
-# Source local bins
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 
 
@@ -264,7 +217,8 @@ _zsh_autosuggest_strategy_valid_command() {
 }
 
 
-export ZSH_AUTOSUGGEST_STRATEGY=(history completion valid_command)
+# export ZSH_AUTOSUGGEST_STRATEGY=(history completion valid_command)
+export ZSH_AUTOSUGGEST_STRATEGY=(completion)
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 export ZSH_AUTOSUGGEST_MIN_BUFFER_SIZE=2
 ZSH_AUTOSUGGEST_COMPLETION_IGNORE='(|.*)' 
