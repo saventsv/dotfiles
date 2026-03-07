@@ -1,4 +1,5 @@
 return {
+  { "ziglang/zig.vim" },
   {
     "neovim/nvim-lspconfig",
     dependencies = {
@@ -10,7 +11,7 @@ return {
     config = function()
       require("mason").setup()
       require("mason-lspconfig").setup({
-        ensure_installed = {"html", "cssls", "ts_ls", "lua_ls", "clangd", "rust_analyzer" },
+        ensure_installed = {"html", "cssls", "ts_ls", "lua_ls", "clangd", "rust_analyzer", "zls" },
       })
 
       local blink = require('blink.cmp')
@@ -18,14 +19,14 @@ return {
       vim.lsp.config('*', {
         capabilities = blink.get_lsp_capabilities()
       })
-      vim.lsp.config('lua_ls', {
+      --[[ vim.lsp.config('lua_ls', {
         settings = {
           Lua = {
             completion = { callSnippet = "Replace" },
           }
         }
-      })
-      vim.lsp.enable({"html", "cssls", "ts_ls", "lua_ls", "clangd", "rust_analyzer"})
+      }) --]]
+      vim.lsp.enable({"html", "cssls", "ts_ls", "lua_ls", "clangd", "rust_analyzer", "zls"})
 
       vim.api.nvim_create_autocmd('LspAttach', {
         callback = function(event)

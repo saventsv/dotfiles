@@ -262,7 +262,11 @@ zstyle ':completion:*:list-colors' ${(s.:.)LS_COLORS}
 
 bindkey '^ ' autosuggest-accept
 
-
 eval "$(starship init zsh)"
 
+
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+
+
+

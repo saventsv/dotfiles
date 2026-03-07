@@ -33,6 +33,12 @@ keybinds clear-defaults=true {
     bind "Alt Shift 1" { GoToTab 1; }
     bind "Alt Shift 2" { GoToTab 2; }
     bind "Alt Shift 3" { GoToTab 3; }
+    bind "Alt Shift 4" { GoToTab 4; }
+    bind "Alt Shift 5" { GoToTab 5; }
+    bind "Alt Shift 6" { GoToTab 6; }
+    bind "Alt Shift 7" { GoToTab 7; }
+    bind "Alt Shift 8" { GoToTab 8; }
+    bind "Alt Shift 9" { GoToTab 9; }
     bind "Alt Enter" { NewPane; }
     bind "Alt m" {
       Run "zellij" "action" "new-pane" "--floating" "--cwd" "."{
