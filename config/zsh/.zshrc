@@ -8,7 +8,7 @@ zstyle ':completion:*' menu select
 export COLORTERM=truecolor
 export TERM=xterm-256color
 
-alias ll='eza -lh --icons --git --group-directories-first --color=always'
+alias ll='eza -lah --icons --git --group-directories-first --color=always'
 alias n='nvim'
 alias i='sudo pacman -S'
 alias a='yay -S'

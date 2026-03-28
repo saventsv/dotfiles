@@ -32,6 +32,7 @@ vim.opt.showtabline = 0
 vim.opt.winbar = nil
 vim.opt.undofile = true
 vim.opt.timeoutlen = 300
+vim.opt.inccommand = "nosplit"
 
 -------------------------------------------------------------------------------
 -- 2. AUTOCMDS (Automation)
@@ -100,6 +101,7 @@ set("n", "<C-m>", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 set("n", "<leader>q", "<CMD>wq<CR>")
 set("n", "<leader>w", "<CMD>w<CR>")
 set("n", "<C-s>", "<CMD>w<CR>")
+set("n", "<leader>c", "<CMD>noh<CR>")
 set("n", "<C-d>", "<C-d>zz")
 set("n", "<C-u>", "<C-u>zz")
 set("i", "<C-e>", "<C-o>$")
@@ -119,11 +121,19 @@ set("n", "<leader>rc", ":RemoveComments<CR>", { desc = 'Remove comments', silent
 set("n", "<leader>t", "<cmd>Markview toggle<CR>", { desc = "Toggle Markview" })
 set("n", "<leader>mc", ":delmarks! | delmarks A-Z0-9<CR>", { desc = "Clear all marks" })
 set({'n', 'v'}, '<C-y>', '"+y', { desc = 'Copy to system clipboard' })
-set('n', '<leader>Y', '<cmd>%y+<cr>', { desc = 'Copy entire file to clipboard' })
+set('n', '<leader>y', '<cmd>%y+<cr>', { desc = 'Copy entire file to clipboard' })
 set("n", "<leader>i", "mzgg=G`z", { desc = "Auto-indent entire file" })
 set("n", "<leader>e", "$")
 set("n", "<leader>s", "^")
 set("n", "<leader>z", "zz")
+set("n", "<leader>r", ":%s/<C-r><C-w>//g<Left><Left>")
+set("v", "<leader>r", function()
+    vim.cmd('normal! "hy')
+    local text = vim.fn.getreg('h')
+    local search = vim.fn.escape(text, '/\\'):gsub('\n', '\\n')
+    local command = ':%s/' .. search .. '//g'
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(command .. '<Left><Left>', true, false, true), 'n', false)
+end, { desc = "Replace selection in whole file" })
 
 -- Centering Mark jumps (Combined loops)
 for _, i in ipairs({ {97, 122}, {65, 90} }) do
