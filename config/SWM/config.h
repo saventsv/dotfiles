@@ -13,7 +13,7 @@ static const double scratchpad_width = 0.8;
 static const double scratchpad_height = 0.7;
 
 static const char *startup_commands[] = {
-  "feh --bg-fill /home/saven/Downloads/wallpaper2.png &",
+  "feh --bg-fill /home/saven/.config/dotfiles/config/SWM/wallpaper2.png &",
   "picom --config ~/.config/dotfiles/config/picom/picom.conf --daemon",
   "polybar nord-bar &",
   NULL         

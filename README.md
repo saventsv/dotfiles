@@ -1,22 +1,42 @@
 # Dotfiles 
 
+> [!IMPORTANT]
+> For Some of the Programs if you don't put the Dotfiles in .config or Have a Different Username the Paths will Have to be Changed
+
 ## Needed Programs
 
-- hyprland
 - fzf
-- yazi
 - kitty
 - neovim
-- rofi-wayland
+- rofi
 - sddm 
-- waybar
 - zellij
 - starship
+
+## Wayland
+
+- Hyprland
+- waybar
+
+## X11 (if using SWM)
+
+- polybar
+- picom
+- SWM
+- feh (no need to do anything else already convered in SWM config)
+
 
 ## Pulling Dotfiles
 
 - make sure to do this in the dir you want it to be in
 `git clone https://github.com/saventsv/dotfiles.git` 
+- then add the custom wm I made
+```bash
+git clone https://github.com/saventsv/SWM.git
+cd SWM
+sudo make clean install
+rm -rf .git
+```
 
 ### Installation Programs Command
 
