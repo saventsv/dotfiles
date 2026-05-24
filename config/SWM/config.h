@@ -38,17 +38,21 @@ static const Keybinding keybindings[] = {
   { MOD,               XK_Return,     spawn,                  { .c = "kitty"}  },
   { ALT,               XK_space,      spawn,                  { .c = "rofi -show drun"}  },
   { MOD | SHIFT,       XK_s,          spawn,                  { .c = "flameshot full -p ~/Pictures" }       },
-  { MOD | SHIFT,       XK_e,          quit,                   { .v = NULL }       },
+
+  { MOD | SHIFT,       XK_e,          quit,                   { .v = NULL }    },
   { MOD,               XK_space,      activate_chord,         { .v = NULL }    },
   { MOD,               XK_q,          close_window,           { .v = NULL }    },
-  { MOD,               XK_h,          focus,                  { .i = 0 }       },
-  { MOD,               XK_l,          focus,                  { .i = 1 }       },
-  { MOD,               XK_k,          focus,                  { .i = 2 }       },
-  { MOD,               XK_j,          focus,                  { .i = 3 }       },
-  { MOD | SHIFT,       XK_h,          move_window,            { .i = 0 }       },
-  { MOD | SHIFT,       XK_l,          move_window,            { .i = 1 }       },
-  { MOD | SHIFT,       XK_k,          move_window,            { .i = 2 }       },
-  { MOD | SHIFT,       XK_j,          move_window,            { .i = 3 }       },
+
+  { MOD,               XK_h,          focus,                  { .d = LEFT }    },
+  { MOD,               XK_l,          focus,                  { .d = RIGHT }   },
+  { MOD,               XK_k,          focus,                  { .d = UP }      },
+  { MOD,               XK_j,          focus,                  { .d = DOWN }    },
+
+  { MOD | SHIFT,       XK_h,          move_window,            { .d = LEFT }    },
+  { MOD | SHIFT,       XK_l,          move_window,            { .d = RIGHT }   },
+  { MOD | SHIFT,       XK_k,          move_window,            { .d = UP }      },
+  { MOD | SHIFT,       XK_j,          move_window,            { .d = DOWN }    },
+  
   { MOD,               XK_1,          focus_workspace,        { .i = 0 }       },
   { MOD,               XK_2,          focus_workspace,        { .i = 1 }       },
   { MOD,               XK_3,          focus_workspace,        { .i = 2 }       },
@@ -58,6 +62,7 @@ static const Keybinding keybindings[] = {
   { MOD,               XK_7,          focus_workspace,        { .i = 6 }       },
   { MOD,               XK_8,          focus_workspace,        { .i = 7 }       },
   { MOD,               XK_9,          focus_workspace,        { .i = 8 }       },
+
   { MOD | SHIFT,       XK_1,          move_window_workspace,  { .i = 0 }       },
   { MOD | SHIFT,       XK_2,          move_window_workspace,  { .i = 1 }       },
   { MOD | SHIFT,       XK_3,          move_window_workspace,  { .i = 2 }       },
@@ -74,6 +79,6 @@ static const Chord chords[] = {
   { XK_t, toggle_scratchpad, {.i = 1} },
   { XK_b, spawn, { .c = "zen-browser"}  },
   { XK_q, spawn, { .c = "systemctl poweroff"}  },
-  { XK_r, spawn, { .c = "systemctl reboot"}  },
+  { XK_w, spawn, { .c = "systemctl reboot"}  },
 };
 

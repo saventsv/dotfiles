@@ -25,11 +25,28 @@ extern unsigned int numlockmask;
 /* ==================== Struct Definitions ==================== */
 
 // Basic Hierarchy WindowManager -> Workspace -> Client
+
+typedef enum
+{
+  TILED,
+  FLOATING,
+  SCRATCHPAD
+} ClientType;
+
+typedef enum
+{
+  RIGHT,
+  LEFT,
+  UP,
+  DOWN
+} Direction;
+
 typedef struct Client
 {
   Window window;
   int x, y, width, height;
-  int is_scratchpad;
+  // Note that a client can either be floating or a scratchpad but not both
+  ClientType type;
   int is_visible;
   // Linked list
   struct Client *next_client;
@@ -38,10 +55,12 @@ typedef struct Client
 typedef struct
 {
   Client *master_client;
+  Client *master_floating;
   Client *focused;
   Client *last_focused;
+  // To check if active do NULL check
   int n_clients;
-  int n_scratchpads;
+  int n_floating;
   int id;
 } Workspace;
 
@@ -60,9 +79,9 @@ typedef struct
 typedef union 
 {
   int i;
-  Client client;
   const char *c;
   const void *v;
+  Direction d;
 } Arg;
 
 // Keybinds and Key Chords
@@ -131,7 +150,12 @@ WindowManager WM;
 int total_scratchpads = sizeof(scratchpads) / sizeof(Scratchpad);
 int bar_height = 0;
 
+unsigned long active_px;
+unsigned long inactive_px;
+unsigned long chord_px;
+
 /* MISC */
+
 
 void quit(Display *dpy, const Arg *arg)
 {
@@ -156,33 +180,31 @@ void setup_numlockmask(Display *dpy) {
   XFreeModifiermap(modmap);
 }
 
+
 int is_valid_client(Workspace *ws, Client *target_client)
 {
-  Client *client = ws -> master_client;
+  Client *client;
 
-  while(client)
-  {
-    if (client == target_client)
+  for(client = ws -> master_client; client; client = client -> next_client)
+    if(client == target_client)
       return 1;
-    client = client -> next_client;
-  }
+
+  for(client = ws -> master_floating; client; client = client -> next_client)
+    if(client == target_client)
+      return 1;
+
   return 0;
 }
 
 void set_focus(Display *dpy, Workspace *ws, Client *client)
 {
-  if (!client) return;
 
-  if (ws -> focused && ws -> focused != client && is_valid_client(ws, ws -> focused))
-  {
+  if(!client || !is_valid_client(ws, client))
+    return;
 
-    if(ws -> last_focused && ws -> last_focused -> is_scratchpad)
-      ws -> last_focused = NULL;
+  // If is not a floating or scratchpad window
 
-    if(!ws -> focused -> is_scratchpad)
-      ws -> last_focused = ws -> focused;
-  }
-
+  ws -> last_focused = ws -> focused;
   ws -> focused = client;
 
   XSetInputFocus(
@@ -193,6 +215,32 @@ void set_focus(Display *dpy, Workspace *ws, Client *client)
       );
 }
 
+void ensure_focus(Display *dpy, Workspace *ws)
+{
+
+  if(ws -> focused && is_valid_client(ws, ws -> focused))
+    return;
+
+  if(ws -> last_focused && is_valid_client(ws, ws -> last_focused))
+  {
+    set_focus(dpy, ws, ws -> last_focused);
+    return;
+  }
+
+  if(ws -> master_client && is_valid_client(ws, ws -> master_client))
+  {
+    set_focus(dpy, ws, ws -> master_client);
+    return;
+  }
+
+  if(ws -> master_floating && is_valid_client(ws, ws -> master_floating))
+  {
+    set_focus(dpy, ws, ws -> master_floating);
+    return;
+  }
+
+}
+
 unsigned long get_color(Display *dpy, const char *color_name) {
   Colormap cmap = DefaultColormap(dpy, DefaultScreen(dpy));
   XColor color;
@@ -200,17 +248,48 @@ unsigned long get_color(Display *dpy, const char *color_name) {
   return color.pixel;
 }
 
+void cache_borders(Display *dpy)
+{
+  active_px = get_color(dpy, color_active);
+  inactive_px = get_color(dpy, color_inactive);
+  chord_px = get_color(dpy, color_chord);
+}
+
 void update_borders(Display *dpy) {
   Workspace *ws = &WM.workspaces[WM.current_workspace];
-  unsigned long active_px = get_color(dpy, color_active);
-  unsigned long inactive_px = get_color(dpy, color_inactive);
-  unsigned long chord_px = get_color(dpy, color_chord);
 
   Client *client = ws -> master_client;
 
   while(client)
   {
-    if(client == ws -> focused)
+    if(client == ws -> focused && ws -> focused -> type == TILED)
+    {
+      if(WM.key_state == 0)
+      {
+        if(client -> window)
+          XSetWindowBorder(dpy, client -> window, active_px);
+      }
+      else
+      {
+        if(client -> window)
+          XSetWindowBorder(dpy, client -> window, chord_px);
+      }
+    }
+    else
+    {
+      if(client -> window)
+        XSetWindowBorder(dpy, client -> window, inactive_px);
+    }
+    client = client -> next_client;
+  }
+
+  client = ws -> master_floating;
+
+  if(!client)
+    return;
+  while(client)
+  {
+    if(client == ws -> focused && ws -> focused -> type != TILED)
     {
       if(WM.key_state == 0)
       {
@@ -406,6 +485,7 @@ void init_wm()
     WM.workspaces[i].focused = NULL;
     WM.workspaces[i].last_focused = NULL;
     WM.workspaces[i].n_clients = 0;
+    WM.workspaces[i].n_floating = 0;
     WM.workspaces[i].id = i;
   }
   WM.current_workspace = 0;
@@ -426,8 +506,6 @@ int has_proto(Display *dpy, Window w, Atom protocol) {
 
 int is_scratchpad(Display *dpy, Client *client)
 {
-  Workspace *ws = &WM.workspaces[WM.current_workspace];
-
   XClassHint class_hint = {0};
 
   if(!XGetClassHint(dpy, client -> window, &class_hint))
@@ -469,7 +547,7 @@ Client *find_scratchpad(Display *dpy, int index)
     return NULL;
 
   Workspace *ws = &WM.workspaces[WM.current_workspace];
-  Client *client = ws->master_client;
+  Client *client = ws -> master_floating;
 
   while(client)
   {
@@ -489,7 +567,7 @@ Client *find_scratchpad(Display *dpy, int index)
       if(class_hint.res_class) XFree(class_hint.res_class);
     }
 
-    client = client->next_client;
+    client = client -> next_client;
   }
 
   return NULL;
@@ -498,6 +576,52 @@ Client *find_scratchpad(Display *dpy, int index)
 
 
 /* Windows */
+
+void tile_scratchpad(Display *dpy)
+{
+
+  Workspace *ws = &WM.workspaces[WM.current_workspace];
+  int screen = DefaultScreen(dpy);
+  int screen_width = DisplayWidth(dpy, screen);
+  int screen_height = DisplayHeight(dpy, screen);
+
+  int pad_width = screen_width * scratchpad_width;
+  int pad_height = screen_height * scratchpad_height;
+  int pad_x = (screen_width - pad_width) / 2;
+  int pad_y = (screen_height - pad_height) / 2;
+
+  // NULL check
+  if(!ws -> master_floating)
+    return;
+  Client *client = ws -> master_floating;
+
+  while(client)
+  {
+    XMoveResizeWindow(
+        dpy, 
+        client -> window, 
+        pad_x, 
+        pad_y, 
+        pad_width - (gaps * 2) - (border_width * 2), 
+        pad_height - (gaps * 2) - (border_width * 2)
+        );
+    XRaiseWindow(dpy, client -> window);
+
+    client -> x = pad_x;
+    client -> y = pad_y;
+    client -> width = pad_width;
+    client -> height = pad_height;
+
+    XSetWindowBorderWidth(dpy, client -> window, border_width);
+
+    if(client == ws -> focused)
+      XSetWindowBorder(dpy, client -> window, active_px);
+    else
+      XSetWindowBorder(dpy, client -> window, inactive_px);
+    client = client -> next_client;
+  }
+
+}
 
 void tile(Display *dpy)
 {
@@ -513,12 +637,10 @@ void tile(Display *dpy)
   int screen = DefaultScreen(dpy);
   int screen_width = DisplayWidth(dpy, screen);
   int screen_height = DisplayHeight(dpy, screen) - bar_height;
-  int tiled = ws -> n_clients - ws -> n_scratchpads;
 
-  if(tiled <= 0) return;
 
   // MASTER_RATIO from conifig file
-  int master_width = ( tiled > 1 ) ? screen_width * master_ratio: screen_width ;
+  int master_width = ws -> n_clients > 1 ? screen_width * master_ratio: screen_width ;
   int master_height = screen_height;
   int stack_width = screen_width - master_width;
   int stack_x = master_width;
@@ -528,112 +650,89 @@ void tile(Display *dpy)
 
   Client *client = ws -> master_client;
 
-  unsigned long active_px = get_color(dpy, color_active);
-  unsigned long inactive_px = get_color(dpy, color_inactive);
-
   int i = 0;
   while(client) 
   {
-
-    if(client -> is_scratchpad && !client -> is_visible) 
+    // If Master
+    if (i == 0) 
     {
-      client = client -> next_client;
-      continue;
+      XSetWindowBorderWidth(dpy, client -> window, border_width);
+      if(client == ws -> focused)
+        XSetWindowBorder(dpy, client -> window, active_px);
+      else
+        XSetWindowBorder(dpy, client -> window, inactive_px);
+      XMoveResizeWindow(
+          dpy, 
+          client -> window, 
+          0 + gaps, 
+          offset_y + gaps, 
+          master_width - (gaps * 2) - (border_width * 2), 
+          master_height - (gaps * 2) - (border_width * 2)
+          );
+      client -> x = 0;
+      client -> y = 0;
+      client -> width = master_width;
+      client -> height = master_height;
     }
-
-    switch(client -> is_scratchpad)
+    else
     {
-      case 0:
-        {
+      int stack_count = ws -> n_clients - 1;
+      if(stack_count <= 0)
+      {
+        client = client -> next_client;
+        i++;
+        continue;
+      }
+      int stack_height = screen_height / stack_count;
+      int stack_y = stack_height * (i - 1);
 
-          if ( i == 0 ) 
-          {
-            XSetWindowBorderWidth(dpy, client -> window, border_width);
-            if(client == ws -> focused)
-              XSetWindowBorder(dpy, client -> window, active_px);
-            else
-              XSetWindowBorder(dpy, client -> window, inactive_px);
-            XMoveResizeWindow(
-                dpy, 
-                client -> window, 
-                0 + gaps, 
-                offset_y + gaps, 
-                master_width - (gaps * 2) - (border_width * 2), 
-                master_height - (gaps * 2) - (border_width * 2)
-                );
-            client -> x = 0;
-            client -> y = 0;
-            client -> width = master_width;
-            client -> height = master_height;
-          }
-          else
-          {
-            int stack_count = ws -> n_clients - ws -> n_scratchpads - 1;
-            if(stack_count <= 0)
-            {
-              client = client -> next_client;
-              i++;
-              continue;
-            }
-            int stack_height = screen_height / stack_count;
-            int stack_y = stack_height * (i - 1);
-            XSetWindowBorderWidth(dpy, client -> window, border_width);
-            if(client == ws -> focused)
-              XSetWindowBorder(dpy, client -> window, active_px);
-            else
-              XSetWindowBorder(dpy, client -> window, inactive_px);
+      XSetWindowBorderWidth(dpy, client -> window, border_width);
 
-            XMoveResizeWindow(
-                dpy, 
-                client -> window, 
-                stack_x + gaps, 
-                stack_y + gaps + offset_y, 
-                stack_width - (gaps * 2) - (border_width * 2), 
-                stack_height - (gaps * 2) - (border_width * 2)
-                );
-            client -> x = stack_x;
-            client -> y = stack_y;
-            client -> width = stack_width;
-            client -> height = stack_height;
-          }
-          client = client -> next_client;
-          i++;
-          break;
-        }
-      case 1:
-        {
-          int pad_height = screen_height * scratchpad_height;
-          int pad_width = screen_width * scratchpad_width;
-          int pad_x = (screen_width - pad_width) / 2;
-          int pad_y = (screen_height - pad_height) / 2;
+      if(client == ws -> focused)
+        XSetWindowBorder(dpy, client -> window, active_px);
+      else
+        XSetWindowBorder(dpy, client -> window, inactive_px);
 
-          XMoveResizeWindow(dpy, 
-              client -> window, 
-              pad_x, 
-              pad_y, 
-              pad_width - (gaps * 2) - (border_width * 2), 
-              pad_height - (gaps * 2) - (border_width * 2) 
-              );
-          XRaiseWindow(dpy, client -> window);
-
-          client -> x = pad_x;
-          client -> y = pad_y;
-          client -> width = pad_width;
-          client -> height = pad_height;
-
-          client = client -> next_client;
-          continue;
-        }
+      XMoveResizeWindow(
+          dpy, 
+          client -> window, 
+          stack_x + gaps, 
+          stack_y + gaps + offset_y, 
+          stack_width - (gaps * 2) - (border_width * 2), 
+          stack_height - (gaps * 2) - (border_width * 2)
+          );
+      client -> x = stack_x;
+      client -> y = stack_y;
+      client -> width = stack_width;
+      client -> height = stack_height;
     }
+    client = client -> next_client;
+    i++;
   }
   WM.is_occupied = 0;
 }
 
-Client *find_prev_client(Client *client)
+Client *find_prev_client(Workspace *ws, Client *client)
 {
-  Workspace *ws = &WM.workspaces[WM.current_workspace];
   Client *prev_client = NULL;
   Client *curr_client = ws -> master_client;
+
+  while(curr_client)
+  {
+    if (curr_client == client)
+      return prev_client;
+
+    prev_client = curr_client;
+    curr_client = curr_client -> next_client;
+  }
+
+  return NULL;
+}
+
+Client *find_prev_floating(Workspace *ws, Client *client)
+{
+  Client *prev_client = NULL;
+  Client *curr_client = ws -> master_floating;
 
   while(curr_client)
   {
@@ -661,10 +760,18 @@ Client *find_last_client(Workspace *ws)
   return last_client;
 }
 
-// left = 0
-// right = 1
-// up = 2
-// down = 3
+Client *find_last_floating(Workspace *ws)
+{
+  Client *last_client = ws -> master_floating;
+
+  if(!last_client) return NULL;
+
+  while(last_client -> next_client)
+    last_client = last_client -> next_client;
+
+  return last_client;
+}
+
 void focus(Display *dpy, const Arg *arg) 
 {
   Workspace *ws = &WM.workspaces[WM.current_workspace];
@@ -673,13 +780,13 @@ void focus(Display *dpy, const Arg *arg)
   // i will be used as a index
   int i = 0;
 
-  if(!arg || arg -> i > 3 || arg -> i < 0) return;
+  if(!arg) return;
   if(ws -> n_clients < 2) return;
 
-  switch(arg -> i)
+  switch(arg -> d)
   {
 
-    case 0:
+    case LEFT:
       {
         while(client)
         {
@@ -694,7 +801,7 @@ void focus(Display *dpy, const Arg *arg)
             else 
             {
               new_focus = ws -> master_client -> next_client;
-              set_focus(dpy, ws, ws -> focused);
+              set_focus(dpy, ws, new_focus);
               break;
             }
           }
@@ -703,7 +810,7 @@ void focus(Display *dpy, const Arg *arg)
         }
         break;
       }
-    case 1:
+    case RIGHT:
       {
         while(client)
         {
@@ -711,9 +818,8 @@ void focus(Display *dpy, const Arg *arg)
           {
             if(i == 0)
             {
-              if(ws -> last_focused && is_valid_client(ws, ws -> last_focused))
+              if(ws -> last_focused && is_valid_client(ws, ws -> last_focused) && ws -> last_focused != ws -> master_client)
               {
-                Client *tmp = ws -> focused;
                 if(ws -> last_focused && is_valid_client(ws, ws -> last_focused))
                   new_focus = ws -> last_focused;
               }
@@ -734,7 +840,7 @@ void focus(Display *dpy, const Arg *arg)
         }
         break;
       }
-    case 2:
+    case UP:
       {
         while(client)
         {
@@ -755,7 +861,7 @@ void focus(Display *dpy, const Arg *arg)
             } 
             else
             {
-              Client *prev_client = find_prev_client(client);
+              Client *prev_client = find_prev_client(ws, client);
               new_focus = prev_client;
               set_focus(dpy, ws, new_focus);
               break;
@@ -766,7 +872,7 @@ void focus(Display *dpy, const Arg *arg)
         }
         break;
       }
-    case 3:
+    case DOWN:
       {
         while(client)
         {
@@ -810,7 +916,7 @@ void focus_workspace(Display *dpy, const Arg *arg)
   {
     XUnmapWindow(dpy, client -> window);
 
-    if(client -> is_scratchpad)
+    if(client -> type != TILED)
       client -> is_visible = 0;
     client = client -> next_client;
   }
@@ -819,13 +925,11 @@ void focus_workspace(Display *dpy, const Arg *arg)
 
   Workspace *ws = &WM.workspaces[WM.current_workspace]; 
 
-  // Don't do Anything if there is no windows
-
   client = ws -> master_client;
 
   while(client)
   {
-    if(!client->is_scratchpad || client -> is_visible)
+    if(client -> type != SCRATCHPAD || client -> is_visible)
       XMapWindow(dpy, client -> window);
     client = client -> next_client;
   }
@@ -840,7 +944,7 @@ void focus_workspace(Display *dpy, const Arg *arg)
   tile(dpy);
   update_borders(dpy);
 
-  WM.is_occupied = 1;
+  WM.is_occupied = 0;
 }
 
 void move_window_workspace(Display *dpy, const Arg *arg)
@@ -852,63 +956,77 @@ void move_window_workspace(Display *dpy, const Arg *arg)
 
   Workspace *curr_ws = &WM.workspaces[WM.current_workspace];
   Workspace *new_ws = &WM.workspaces[arg -> i];
-  Client *new_focus = NULL;
+  Client *client = NULL;
 
 
   // Check if There is a Window to Move
-  if(!curr_ws -> focused) return;
+  if(!curr_ws -> focused) 
+    return;
 
-  Client *client =  curr_ws -> focused;
+  client = curr_ws -> focused;
 
-  Client *prev_client = find_prev_client(client);
+  Client *prev_client = NULL;
 
-  // Check If Current Window is master
-  if(!prev_client)
+  if(client -> type == TILED)
+    prev_client = find_prev_client(curr_ws, client);
+  else
+    prev_client = find_prev_floating(curr_ws, client);
+
+  if(client -> type == TILED)
   {
-    curr_ws -> master_client = client -> next_client;
-    new_focus = client -> next_client;
-    set_focus(dpy, curr_ws, new_focus);
+    if(client == curr_ws -> master_client)
+      curr_ws -> master_client = client -> next_client;
+    else
+      prev_client -> next_client = client -> next_client;
+
+    if(!new_ws -> master_client)
+      new_ws -> master_client = client;
+    else
+    {
+      Client *last_client = find_last_client(new_ws);
+      last_client -> next_client = client;
+      client -> next_client = NULL;
+    }
+
+    set_focus(dpy, new_ws, client);
   }
   else
   {
-    prev_client -> next_client = client -> next_client;
-    new_focus = prev_client;
-    set_focus(dpy, curr_ws, new_focus);
+    if(client == curr_ws -> master_floating)
+      curr_ws -> master_floating = client -> next_client;
+    else
+      prev_client -> next_client = client -> next_client;
+
+    if(!new_ws -> master_floating)
+      new_ws -> master_floating = client;
+    else
+    {
+      Client *last_client = find_last_floating(new_ws);
+      last_client -> next_client = client;
+      client -> next_client = NULL;
+    }
+
   }
 
-  XUnmapWindow(dpy, client -> window);
-
-  // check if there is a master window
-  if(new_ws -> master_client)
+  if(client -> type == TILED)
   {
-    Client *last_client = find_last_client(new_ws);
-    last_client -> next_client = client;
-    client -> next_client = NULL;
-    
-    new_focus = client;
-    set_focus(dpy, new_ws, new_focus);
-
-    tile(dpy);
-    update_borders(dpy);
+    curr_ws -> n_clients--;
+    new_ws -> n_clients++;
   }
   else
   {
-    new_ws -> master_client = client;
-    client -> next_client = NULL;
-
-    new_focus = client;
-
-    set_focus(dpy, new_ws, new_focus);
-
-    tile(dpy);
-    update_borders(dpy);
+    curr_ws -> n_floating--;
+    new_ws -> n_floating++;
   }
 
-
-  curr_ws -> n_clients--;
-  new_ws -> n_clients++;
+  if(curr_ws -> focused == client) curr_ws -> focused = NULL;
+  if(curr_ws -> last_focused == client) curr_ws -> last_focused = NULL;
 
   focus_workspace(dpy, arg);
+  tile_scratchpad(dpy);
+  tile(dpy);
+  set_focus(dpy, new_ws, client);
+  update_borders(dpy);
 }
 
 
@@ -921,7 +1039,7 @@ void swap_next_client(Client *client)
   if(!client || !client -> next_client) return;
 
   Client *next_client = client -> next_client;
-  Client *prev_client = find_prev_client(client);
+  Client *prev_client = find_prev_client(ws, client);
 
   client -> next_client = next_client -> next_client;
   next_client -> next_client = client;
@@ -934,7 +1052,8 @@ void swap_next_client(Client *client)
 
 void swap_with_prev(Client *client)
 {
-  Client *prev_client = find_prev_client(client);
+  Workspace *ws = &WM.workspaces[WM.current_workspace];
+  Client *prev_client = find_prev_client(ws, client);
   if(!prev_client)
     return;
   swap_next_client(prev_client);
@@ -947,18 +1066,21 @@ void move_window(Display *dpy, const Arg *arg)
   Client *client = ws -> focused;
   Client *new_focus = NULL;
 
-  // NULL and range check
-  if(!arg || arg -> i > 3 || arg -> i < 0) return;
+  if(client -> type != TILED)
+    return;
 
-  switch(arg -> i)
+  // NULL and range check
+  if(!arg) return;
+
+  switch(arg -> d)
   {
 
-    case 0:
+    case LEFT:
       {
         // If trying to move master client left don't do anything
         if (!client || client == ws -> master_client) break;
 
-        Client *prev_client = find_prev_client(client);
+        Client *prev_client = find_prev_client(ws, client);
         Client *master = ws -> master_client;
 
         if(!prev_client) break;
@@ -986,7 +1108,7 @@ void move_window(Display *dpy, const Arg *arg)
         update_borders(dpy);
         break;
       }
-    case 1:
+    case RIGHT:
       {
         // If it is not master don't do anything because it is in the stack
         if(client != ws -> master_client) break;
@@ -997,7 +1119,7 @@ void move_window(Display *dpy, const Arg *arg)
         update_borders(dpy);
         break;
       }
-    case 2:
+    case UP:
       {
         if(client == ws -> master_client) break;
 
@@ -1011,9 +1133,7 @@ void move_window(Display *dpy, const Arg *arg)
         else
         {
           while(curr_client -> next_client != client)
-          {
             curr_client = curr_client -> next_client;
-          }
           new_focus = curr_client -> next_client;
           set_focus(dpy, ws, new_focus);
         }
@@ -1021,7 +1141,7 @@ void move_window(Display *dpy, const Arg *arg)
         update_borders(dpy);
         break;
       }
-    case 3:
+    case DOWN:
       {
         if(client == find_last_client(ws)) break;
 
@@ -1040,7 +1160,8 @@ void close_window(Display *dpy, const Arg *arg)
   Workspace *ws = &WM.workspaces[WM.current_workspace];
   Client *client = ws -> focused;
 
-  if(!client) return;
+  if(!client)
+    return;
 
   Atom WM_DELETE_WINDOW = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
   Atom WM_PROTOCOLS = XInternAtom(dpy, "WM_PROTOCOLS", False);
@@ -1065,29 +1186,6 @@ void close_window(Display *dpy, const Arg *arg)
 }
 
 
-
-/* Keybinds */
-/*
-   void handle_chord(Display *dpy, const Chord chords[], int n_chords, KeySym key) {
-
-   int matched = 0;
-
-   for(int i = 0; i < n_chords; i++) {
-   if(chords[i].key == key) {
-   chords[i].func(dpy, &chords[i].arg);
-
-   matched = 1;
-   break;
-   }
-   }
-
-   if(!matched) {
-   WM.key_state = 0;
-   XUngrabKeyboard(dpy, CurrentTime);
-   }
-   }
-   */
-
 void toggle_scratchpad(Display *dpy, const Arg *arg) 
 {
   if(!arg) return;
@@ -1110,12 +1208,8 @@ void toggle_scratchpad(Display *dpy, const Arg *arg)
 
       if (ws -> focused == client)
       {
-        if (ws -> last_focused && is_valid_client(ws, ws -> last_focused))
-          new_focus = ws -> last_focused;
-        else if (ws -> master_client)
-          new_focus = ws -> master_client;
-        else
-          new_focus = NULL;
+        ws -> focused = NULL;
+        new_focus = ws -> master_client;
       }
 
       if (new_focus)
@@ -1128,7 +1222,7 @@ void toggle_scratchpad(Display *dpy, const Arg *arg)
       XMapRaised(dpy, client -> window);
       client -> is_visible = 1;
       new_focus = client;
-      set_focus(dpy, ws, ws -> focused);
+      set_focus(dpy, ws, new_focus);
     }
   }
   else
@@ -1136,7 +1230,9 @@ void toggle_scratchpad(Display *dpy, const Arg *arg)
     Arg spawn_arg = {.c = scratchpads[arg -> i].cmd};
     spawn(dpy, &spawn_arg);
   }
+
   tile(dpy);
+  tile_scratchpad(dpy);
   update_borders(dpy);
 }
 
@@ -1169,6 +1265,102 @@ void activate_chord(Display *dpy, const Arg *arg) {
 
 
 
+void unlink_client(Display *dpy, Workspace *ws, Client *client)
+{
+  if(client -> type == TILED)
+  {
+    if(client == ws -> master_client)
+      ws -> master_client = ws -> master_client -> next_client;
+    else
+    {
+      Client *prev_client = find_prev_client(ws, client);
+      if(!prev_client)
+      {
+        fprintf(stderr, "unlink_client: broken list");
+        abort();
+      }
+      prev_client -> next_client = client -> next_client;
+    }
+  }
+  else
+  {
+    if(client == ws -> master_floating)
+      ws -> master_floating = ws -> master_floating -> next_client;
+    else
+    {
+      Client *prev_client = find_prev_floating(ws, client);
+      if(!prev_client) 
+        return;
+      else
+        prev_client -> next_client = client -> next_client;
+    }
+  }
+  client -> next_client = NULL;
+
+  if(ws -> focused == client) ws -> focused = NULL;
+  if(ws -> last_focused == client) ws -> last_focused = NULL;
+}
+
+void destroy_client(Display *dpy, Workspace *ws, Client *client)
+{
+  if(!client) return;
+
+  Client *new_focus = NULL;
+  Client *prev_client = NULL;
+
+  if(client -> type == TILED)
+    prev_client = find_prev_client(ws, client);
+  else
+    prev_client = find_prev_floating(ws, client);
+
+  unlink_client(dpy, ws, client);
+
+
+  if(client -> type == TILED)
+  {
+    if(ws -> last_focused && is_valid_client(ws, ws -> last_focused))
+      new_focus = ws -> last_focused;
+    else if(prev_client && is_valid_client(ws, prev_client))
+      new_focus = prev_client;
+    else if(ws -> master_client && is_valid_client(ws, ws -> master_client))
+      new_focus = ws -> master_client;
+    else if(ws -> master_floating && is_valid_client(ws, ws -> master_floating))
+      new_focus = ws -> master_floating;
+    else
+      new_focus = NULL;
+  }
+  else
+  {
+    if(ws -> last_focused && is_valid_client(ws, ws -> last_focused))
+      new_focus = ws -> last_focused;
+    else if(prev_client && is_valid_client(ws, prev_client))
+      new_focus = prev_client;
+    else if(ws -> master_floating && is_valid_client(ws, ws -> master_floating))
+      new_focus = ws -> master_floating;
+    else if(ws -> master_client && is_valid_client(ws, ws -> master_client))
+      new_focus = ws -> master_client;
+    else
+      new_focus = NULL;
+  }
+
+  if(client -> type == FLOATING || client -> type == SCRATCHPAD)
+    ws -> n_floating--;
+  else
+    ws -> n_clients--;
+
+  if(new_focus == client)
+    new_focus = NULL;
+
+  free(client);
+  client = NULL;
+
+  if(new_focus)
+    set_focus(dpy, ws, new_focus);
+  else
+    XSetInputFocus(dpy, DefaultRootWindow(dpy), RevertToPointerRoot, CurrentTime);
+
+  ensure_focus(dpy, ws);
+}
 
 
 /* Executing Commands */
@@ -1217,6 +1409,7 @@ int main()
   set_desktop_names(dpy);
   update_current_desktop(dpy);
   run_startup(dpy);
+  cache_borders(dpy);
 
 
   // Keybind Declarations
@@ -1318,7 +1511,6 @@ int main()
           if(!client)
             break;
 
-          ws -> n_clients++;
 
 
           client -> window = event.xmaprequest.window;
@@ -1329,43 +1521,61 @@ int main()
           client -> y = 0;
           client -> width = 0;
           client -> height = 0;
-          client -> is_scratchpad = 0;
+          client -> type = TILED;
           client -> is_visible = 1;
-
-
-          Client *current_client = ws -> master_client;
-
-          if(current_client == NULL)
-          {
-            ws -> master_client = client;
-            XMapWindow(dpy, client -> window);
-            new_focus = client;
-            set_focus(dpy, ws, new_focus);
-            tile(dpy);
-            break;
-          }
-          else
-          {
-            // Iterate Through Clients
-            while(current_client -> next_client != NULL)
-            {
-              current_client = current_client -> next_client;
-            }
-
-            // When the Last Client is Found Set its next_client Equal to The New Client
-            current_client -> next_client = client;
-            XMapWindow(dpy, client -> window);
-            new_focus = client;
-            set_focus(dpy, ws, ws -> focused);
-            tile(dpy);
-            update_borders(dpy);
-          }
 
           if(is_scratchpad(dpy, client))
           {
-            client -> is_scratchpad = 1;
-            ws -> n_scratchpads++;
+            client -> type = SCRATCHPAD;
+            ws -> n_floating++;
           }
+          else
+            ws -> n_clients++;
+
+          Client *current_client;
+
+          if(client -> type == TILED)
+          {
+            current_client = ws -> master_client;
+            if(current_client == NULL)
+            {
+              ws -> master_client = client;
+              new_focus = client;
+            }
+            else
+            {
+              // Iterate Through Clients
+              while(current_client -> next_client != NULL)
+                current_client = current_client -> next_client;
+
+              // When the Last Client is Found Set its next_client Equal to The New Client
+              current_client -> next_client = client;
+              new_focus = client;
+            }
+          } 
+          else 
+          {
+            current_client = ws -> master_floating;
+
+            if(current_client == NULL)
+            {
+              ws -> master_floating = client;
+              new_focus = client;
+            }
+            else 
+            {
+              while(current_client -> next_client)
+                current_client = current_client -> next_client;
+              current_client -> next_client = client;
+              new_focus = client;
+            }
+          }
+
+          XMapWindow(dpy, client -> window);
+          tile(dpy);
+          tile_scratchpad(dpy);
+          set_focus(dpy, ws, new_focus);
+          update_borders(dpy);
 
           break;
         }
@@ -1409,6 +1619,7 @@ int main()
           }
 
           update_borders(dpy);
+          tile_scratchpad(dpy);
           tile(dpy);
           break;
         }
@@ -1420,7 +1631,6 @@ int main()
           Workspace *ws = &WM.workspaces[WM.current_workspace];
           Client *client = ws -> master_client;
           Client *prev_client = NULL;
-          Client *new_focus = NULL;
 
           // Find Client
           while(client)
@@ -1432,77 +1642,30 @@ int main()
           }
 
           // NULL Check
-          if(!client) break;
-
-          // Decrement counts
-          if(client -> is_scratchpad)
-            ws -> n_scratchpads--;
-          ws -> n_clients--;
-
-
-          int was_master = (client == ws -> master_client);
-
-          if(prev_client && !is_valid_client(ws, prev_client))
+          if(!client)
+          {
+            client = ws -> master_floating;
             prev_client = NULL;
-
-          // Unlink from list
-          if(client == ws -> master_client)
-            ws -> master_client = client -> next_client;
-          else
-          {
-            if(prev_client && is_valid_client(ws, prev_client))
-              prev_client -> next_client = client -> next_client;
+            while(client)
+            {
+              if(client -> window == event.xdestroywindow.window)
+                break;
+              prev_client = client;
+              client = client -> next_client;
+            }
           }
 
-          if(ws -> last_focused && !is_valid_client(ws, ws -> last_focused))
-            ws -> last_focused = NULL;
+          if(!client)
+            break;
 
-          // Handle when the client is the focused or last focused
-          if(ws -> focused == client)
-            ws -> focused = NULL;
-          if(ws -> last_focused == client)
-            ws -> last_focused = NULL;
-          if(ws -> focused && !is_valid_client(ws, ws -> focused))
-            ws -> focused = NULL;
-          if(ws -> last_focused && !is_valid_client(ws, ws -> last_focused))
-            ws -> last_focused = NULL;
-
-          // Choose new focus
-          if(was_master)
-          {
-            new_focus = ws -> master_client;
-          } 
-          else if(client -> is_scratchpad)
-          {
-            if(ws -> master_client && is_valid_client(ws, ws -> master_client))
-              new_focus = ws -> master_client;
-            else
-              new_focus = NULL;
-          }
-          else
-          {
-            if(prev_client)
-              new_focus = prev_client;
-            else if(ws -> master_client)
-              new_focus = ws -> master_client;
-            else 
-              new_focus = NULL;
-          }
-
-
-          if(new_focus)
-            set_focus(dpy, ws, new_focus);
-          else
-            XSetInputFocus(dpy, DefaultRootWindow(dpy), RevertToPointerRoot, CurrentTime);
-
-
-
-          free(client);
+          destroy_client(dpy, ws, client);
 
           tile(dpy);
+          tile_scratchpad(dpy);
           update_borders(dpy);
           break;
         }
+
       case EnterNotify:
         {
           if(WM.is_occupied) 
@@ -1516,13 +1679,29 @@ int main()
 
           Client *client = ws -> master_client;
 
+          // Loop through tiled clients
           while(client)
           {
             if(client -> window == crossing_event -> window)
               break;
             client = client -> next_client;
           }
-          if(!client || client == ws -> focused) break;
+
+          // Loop through floating clients
+          if(!client)
+          {
+            client = ws -> master_floating;
+            while(client)
+            {
+              if (client -> window == crossing_event -> window)
+                break;
+              client = client -> next_client;
+            }
+          }
+
+          // NULL check and prevent focusing already focused clients
+          if(!client || client == ws -> focused) 
+            break;
 
           set_focus(dpy, ws, client);
           update_borders(dpy);
