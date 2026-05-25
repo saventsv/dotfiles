@@ -1,24 +1,39 @@
 -- Options
-vim.opt.number = true
-vim.opt.rnu = true
-vim.opt.wrap = false
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
-vim.opt.swapfile = false
-vim.g.netrw_banner = 0
-vim.g.netrw_browse_split = 0
-vim.g.netrw_keepdir = 1
-vim.g.netrw_list_hide = [[^\.[^.].*,^\.$]]
-vim.opt.expandtab = true
-vim.opt.ignorecase = true
-vim.opt.iskeyword:remove({ "_", "-", "(", ")", "<", ">" })
-vim.opt.formatoptions:remove({ "c", "r", "o" })
-vim.opt.undofile = true
-vim.g.netrw_fastbrowse = 0
-vim.opt.autoindent = true
-vim.opt.smartindent = true
 
+local opt = vim.opt
+local group = vim.g
+
+opt.number = true
+opt.rnu = true
+opt.wrap = false
+opt.shiftwidth = 2
+opt.tabstop = 2
+opt.softtabstop = 2
+opt.swapfile = false
+group.netrw_banner = 0
+group.netrw_browse_split = 0
+group.netrw_keepdir = 1
+group.netrw_list_hide = [[^\.[^.].*,^\.$]]
+opt.expandtab = true
+opt.ignorecase = true
+opt.iskeyword:remove({ "_", "-", "(", ")", "<", ">" })
+opt.formatoptions:remove({ "c", "r", "o" })
+opt.undofile = true
+group.netrw_fastbrowse = 0
+opt.autoindent = true
+opt.smartindent = true
+opt.smartcase = true
+opt.scrolloff = 10
+opt.cursorline = true
+opt.wildmenu = true
+opt.wildmode = "longest:full,full"
+opt.wildignorecase = true
+
+opt.timeout = true
+opt.timeoutlen = 300
+
+
+-- hilighting when yanking text
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -27,8 +42,54 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- lsp config for error messages
+vim.diagnostic.config({
+  underline = false,
+
+  virtual_text = {
+    spacing = 2,
+    prefix = "●",
+  },
+
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = "",
+      [vim.diagnostic.severity.WARN] = "▲",
+      [vim.diagnostic.severity.INFO] = "»",
+      [vim.diagnostic.severity.HINT] = "⚑",
+    }
+  },
+
+  severity_sort = true,
+
+  float = {
+    border = "rounded",
+    source = "always",
+  },
+
+  update_in_insert = false,
+})
+
+-- error when holding cursor over 
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function ()
+    vim.diagnostic.open_float(nil, {
+      focus = false
+    })
+  end,
+})
+
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function ()
+    vim.lsp.buf.hover({
+      focus = false
+    })
+  end,
+})
+
 
 require("config.keymaps")
 require("config.plugins")
 require("config.lsp")
 require("config.cmp")
+require("markit").setup()

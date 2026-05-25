@@ -6,13 +6,15 @@ vim.pack.add({
 	"https://github.com/shaunsingh/nord.nvim",
 	"https://github.com/nvim-treesitter/nvim-treesitter",
 	"https://github.com/nvim-tree/nvim-web-devicons",
-	"https://github.com/neovim/nvim-lspconfig",
 	"https://github.com/hrsh7th/nvim-cmp",
 	"https://github.com/hrsh7th/cmp-nvim-lsp",
 	"https://github.com/hrsh7th/cmp-buffer",
 	"https://github.com/hrsh7th/cmp-path",
 	"https://github.com/ibhagwan/fzf-lua",
+  "https://github.com/neovim/nvim-lspconfig",
 })
+
+vim.opt.rtp:append("/home/saven/Programming/back-end/mark-it.nvim")
 
 -- config
 
@@ -50,7 +52,7 @@ require("markview").setup({})
 
 
 -- theming
-vim.cmd.colorscheme("nord")
+-- vim.cmd.colorscheme("nord")
 
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
@@ -59,5 +61,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
     vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
     vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+
+    -- vim.cmd.colorscheme("nord-custom")
   end,
 })

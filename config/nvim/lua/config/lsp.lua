@@ -1,3 +1,5 @@
+print("lsp Loaded")
+
 local on_attach = function(_, bufnr)
 	local opts = { buffer = bufnr }
 
@@ -29,6 +31,7 @@ setup("lua_ls", {
 	},
 })
 
+
 setup("gopls")
 setup("ts_ls")
 setup("clangd")
@@ -41,3 +44,4 @@ vim.lsp.enable({
 	"clangd",
 	"jdtls",
 })
+

@@ -159,6 +159,7 @@ export EDITOR=nvim
 export NOTES_DIR="/home/saven/Notes/"
 export MANPAGER='nvim +Man!'
 export ZELLIJ_CONFIG_DIR="$HOME/.config/dotfiles/config/zellij"
+export PATH="$PATH:$HOME/go/bin/"
 
 if [[ -z "$ZELLIJ" ]]; then
     if command -v zellij >/dev/null 2>&1; then
