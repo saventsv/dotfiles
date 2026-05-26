@@ -1,5 +1,3 @@
-print("lsp Loaded")
-
 local on_attach = function(_, bufnr)
 	local opts = { buffer = bufnr }
 

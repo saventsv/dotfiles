@@ -3,7 +3,7 @@ vim.g.maplocalleader = " "
 
 local set = vim.keymap.set
 
--- general
+-- General
 set('n', '<C-d>', '<C-d>zz')
 set('n', '<C-u>', '<C-u>zz')
 set('i', '<C-Backspace>', '<C-w>', { silent = true })
@@ -15,6 +15,21 @@ set('n', 'gs', '^')
 set('n', 'gh', ':nohl<CR>')
 set('v', '<leader>r', ':s/')
 set('n', '<leader>r', ':%s/')
+
+-- Harpoon
+local harpoon = require("harpoon")
+
+harpoon:setup()
+
+set('n', '<leader>ha', function() harpoon:list():add() end)
+set('n', '<leader>he', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+set('n', '<A-1>', function() harpoon:list():select(1) end)
+set('n', '<A-2>', function() harpoon:list():select(2) end)
+set('n', '<A-3>', function() harpoon:list():select(3) end)
+set('n', '<A-4>', function() harpoon:list():select(4) end)
+set('n', '<A-5>', function() harpoon:list():select(5) end)
+
 
 -- FzfLua
 set('n', '<leader>ff', ':FzfLua files<CR>')
@@ -42,10 +57,10 @@ set('n', '<C-j>', '<C-w>j')
 set('n', '<C-k>', '<C-w>k')
 set('n', '<C-l>', '<C-w>l')
 
-set('n', '<leader>v', ':vsplit<CR>')
-set('n', '<leader>h', ':split<CR>')
+set('n', '<leader>vs', ':vsplit<CR>')
+set('n', '<leader>hs', ':split<CR>')
 
-set('n', '<leader>c', ':close<CR>')
+set('n', '<leader>cb', ':close<CR>')
 
 
 -- terminal

@@ -88,8 +88,9 @@ vim.api.nvim_create_autocmd("CursorHold", {
 })
 
 
-require("config.keymaps")
+-- note that the order of requires matter so the plugins reqiure should always be first (this is a scoping this)
 require("config.plugins")
 require("config.lsp")
 require("config.cmp")
+require("config.keymaps")
 require("markit").setup()
