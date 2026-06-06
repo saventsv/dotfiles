@@ -33,7 +33,7 @@ setup("lua_ls", {
 })
 
 
--- TODO fix this later
+-- TODO fix this
 vim.lsp.config("gdscript", {
     cmd = { "nc", "127.0.0.1", "6005" },
     filetypes = { "gd", "gdscript" },
@@ -48,11 +48,13 @@ setup("gopls")
 setup("ts_ls")
 setup("clangd")
 setup("jdtls")
+setup("nixd")
 
 vim.lsp.enable({
 	"gopls",
 	"lua_ls",
-	"ts_ls",
+  "ts_ls",
+  "nixd",
 	-- "bashls",
 	"clangd",
 	"jdtls",
