@@ -29,6 +29,10 @@
       "rev": "a55e91f25994617a477d4a0e0b326f9dfa648f80",
       "src": "https://github.com/OXY2DEV/markview.nvim"
     },
+    "mini.files": {
+      "rev": "423d6b5afb7a94e658950d470957f830d43dd41e",
+      "src": "https://github.com/nvim-mini/mini.files"
+    },
     "nord.nvim": {
       "rev": "80c1e5321505aeb22b7a9f23eb82f1e193c12470",
       "src": "https://github.com/shaunsingh/nord.nvim"
@@ -53,9 +57,17 @@
       "rev": "0d7d35fa946837b8738b17c18d1faa1ac351e7f9",
       "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
+    "oil.nvim": {
+      "rev": "b91ee5a77a6a9605d9c1aaf4fda74b66082c8297",
+      "src": "https://github.com/stevearc/oil.nvim"
+    },
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
+    },
+    "vim-wakatime": {
+      "rev": "2a856d0b7863dc34ffc80647cb52fbd1319fe144",
+      "src": "https://github.com/wakatime/vim-wakatime"
     }
   }
 }

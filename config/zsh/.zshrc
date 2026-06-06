@@ -72,6 +72,7 @@ function zle-keymap-select {
     echo -ne '\e[5 q' 
   fi
 }
+
 zle -N zle-keymap-select
 _fix_cursor() { echo -ne '\e[5 q' }
 precmd_functions+=(_fix_cursor)
@@ -271,3 +272,10 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 
 
+if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+
+# terminal-wakatime setup
+export PATH="$HOME/.wakatime:$PATH"
+eval "$(terminal-wakatime init)"

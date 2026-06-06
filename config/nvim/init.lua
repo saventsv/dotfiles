@@ -28,9 +28,11 @@ opt.cursorline = true
 opt.wildmenu = true
 opt.wildmode = "longest:full,full"
 opt.wildignorecase = true
-
 opt.timeout = true
 opt.timeoutlen = 300
+opt.grepprg = "rg --vimgrep"
+opt.grepformat = "%f:%l:%c:%m"
+opt.splitright = true
 
 
 -- hilighting when yanking text
@@ -87,10 +89,17 @@ vim.api.nvim_create_autocmd("CursorHold", {
   end,
 })
 
+-- keeping split on terminal close
+vim.api.nvim_create_autocmd("TermClose", {
+  callback = function()
+    vim.cmd("vsplit")
+  end,
+})
+
 
 -- note that the order of requires matter so the plugins reqiure should always be first (this is a scoping this)
 require("config.plugins")
 require("config.lsp")
 require("config.cmp")
 require("config.keymaps")
-require("markit").setup()
+-- require("markit").setup()

@@ -29,36 +29,26 @@ vim.pack.add({
 
   -- file picker
   "https://github.com/ibhagwan/fzf-lua",
-
-
+  "https://github.com/stevearc/oil.nvim", -- just trying
+  "https://github.com/wakatime/vim-wakatime",
 })
 
--- Harpoon
--- local ok, harpoon = pcall(require, "harpoon")
---
--- if not ok then
---   print("Harpoon failed to load")
---   return
--- end
---
--- local set = vim.keymap.set
--- harpoon:setup()
---
--- set('n', '<leader>ha', function() harpoon:list():add() end)
--- set('n', '<leader>he', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
---
--- set('n', '<A-1>', function() harpoon:list():select(1) end)
--- set('n', '<A-2>', function() harpoon:list():select(2) end)
--- set('n', '<A-3>', function() harpoon:list():select(3) end)
--- set('n', '<A-4>', function() harpoon:list():select(4) end)
--- set('n', '<A-5>', function() harpoon:list():select(5) end)
-
-
-vim.opt.rtp:append("/home/saven/Programming/back-end/mark-it.nvim")
+-- vim.opt.rtp:append("/home/saven/Programming/back-end/mark-it.nvim")
 
 -- config
-
 require("fzf-lua").setup({})
+require("oil").setup({
+  skip_confirm_for_simple_edits = true,
+  delete_to_trash = false,
+  view_options = {
+    show_hidden = true,
+    natural_order = true,
+    case_insentsitive = true,
+  },
+  keymaps = {
+    ["l"] = "actions.select",
+  },
+})
 
 vim.api.nvim_create_autocmd("FileType", {
   callback = function()
@@ -88,7 +78,7 @@ vim.api.nvim_create_autocmd("InsertEnter", {
   end,
 })
 
-require("markview").setup({})
+-- require("markview").setup({})
 
 
 -- theming
