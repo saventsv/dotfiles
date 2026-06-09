@@ -3,6 +3,7 @@ vim.pack.add({
 
   -- misc 
   "https://github.com/windwp/nvim-autopairs",
+  "https://github.com/nvim-mini/mini.surround",
   "https://github.com/nvim-lua/plenary.nvim", -- dependancy for harpoon
   {
     src = "https://github.com/ThePrimeagen/harpoon",
@@ -16,7 +17,7 @@ vim.pack.add({
   -- theme
   "https://github.com/shaunsingh/nord.nvim",
 
-  -- dependancy for fzflua?
+  -- dependancies for fzflua?
   "https://github.com/nvim-treesitter/nvim-treesitter",
   "https://github.com/nvim-tree/nvim-web-devicons",
 
@@ -29,7 +30,7 @@ vim.pack.add({
 
   -- file picker
   "https://github.com/ibhagwan/fzf-lua",
-  "https://github.com/stevearc/oil.nvim", -- just trying
+  "https://github.com/stevearc/oil.nvim",
   "https://github.com/wakatime/vim-wakatime",
 })
 

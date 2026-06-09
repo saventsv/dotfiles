@@ -33,19 +33,11 @@ setup("lua_ls", {
 })
 
 
--- TODO fix this
-vim.lsp.config("gdscript", {
-    cmd = { "nc", "127.0.0.1", "6005" },
-    filetypes = { "gd", "gdscript" },
-    root_markers = { "project.godot" },
-})
-
-vim.lsp.enable("gdscript")
-
 
 setup("gopls")
 -- setup("bashls")
 setup("ts_ls")
+setup("pyright")
 setup("clangd")
 setup("jdtls")
 setup("nixd")
@@ -54,9 +46,10 @@ vim.lsp.enable({
 	"gopls",
 	"lua_ls",
   "ts_ls",
+	"clangd",
+  "pyright",
   "nixd",
 	-- "bashls",
-	"clangd",
 	"jdtls",
 })
 

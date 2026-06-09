@@ -25,6 +25,13 @@ extern unsigned int numlockmask;
 /* ==================== Struct Definitions ==================== */
 
 // Basic Hierarchy WindowManager -> Workspace -> Client
+// NEEDED atoms
+// WM_TAKE_FOCUS (for focus stability)
+// (likely wont be and issue) WM_NORMAL_HINTS for sizing things such as terminals
+// WM_HINTS for the InputHint (this is for focu stability)
+// WM_TRANSIENT_FOR (needed for dialogs and similar windows)
+// _NET_WM_STATE_FULLSCREEN (for fullscreen. ABSOLUTE NEED. VERY ANNOYING USER EXPERIENCE WITHOUT HANDLING)
+// _NET_WM_WINDOW_TYPE (for status bars and such)
 
 typedef enum
 {

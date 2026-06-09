@@ -8,7 +8,7 @@ set('n', '<C-d>', '<C-d>zz')
 set('n', '<C-u>', '<C-u>zz')
 set('i', '<C-Backspace>', '<C-w>', { silent = true })
 -- set({'n', 'v'}, '<C-y>', '"+y', { desc = 'Copy to system clipboard' })
-set({'n', 'v'}, '<leader>y', '"+y', { desc = 'Copy to system clipboard' })
+set({'n'; 'v'}, '<leader>cc', '"+y', { desc = 'Copy to system clipboard' })
 set('i', '<C-v>', '<C-g>u<C-r><C-o>+')
 set('n', '<leader>e', vim.diagnostic.open_float)
 set('n', 'ge', '$')
@@ -21,6 +21,37 @@ set('n', '<leader>rw', [[:s/\<<C-r><C-w>\>//g<Left><Left>]])
 set('n', '<leader>in', '<C-a>')
 set('n', '<leader>hs', ':split<CR>')
 set('n', '<leader>vs', ':vsplit<CR>')
+set('n', '<leader>cl', 'gcc', {remap = true})
+
+
+-- mini surround
+require("mini.surround").setup({
+  mappings = {
+    add = "ga",
+    delete = "gd",
+    replace = "gr",
+    find = "gf",
+    find_left = "gF",
+    -- highlight = "gh",
+    update_n_lines = "gn",
+
+    suffix_last = "l",
+    suffix_next = "n",
+  },
+  custom_surroundings = {
+    ["("] = { output = { left = "(", right = ")" } },
+    [")"] = { output = { left = "( ", right = " )" } },
+
+    ["<"] = { output = { left = "<", right = ">" } },
+    [">"] = { output = { left = "< ", right = " >" } },
+
+    ["["] = { output = { left = "[", right = "]" } },
+    ["]"] = { output = { left = "[ ", right = " ]" } },
+
+    ["{"] = { output = { left = "{", right = "}" } },
+    ["}"] = { output = { left = "{ ", right = " }" } },
+  },
+})
 
 -- Harpoon
 local harpoon = require("harpoon")
@@ -79,9 +110,9 @@ set('n', '<leader>cb', ':close<CR>')
 
 -- terminal
 set('t', '<C-w>', function()
-    if vim.bo.buftype == 'terminal' then
-        vim.cmd('bd!')
-    end
+  if vim.bo.buftype == 'terminal' then
+    vim.cmd('bd!')
+  end
 end)
 
 set('n', '<leader>sh', ':!')
@@ -90,7 +121,7 @@ set('n', '<leader>ss', ':silent!!')
 -- quickfix list
 set('n', '<leader>ca', ':silent! grepadd ')
 set('n', '<leader>co', ':copen<CR>')
-set('n', '<leader>cc', ':cclose<CR>')
+-- set('n', '<leader>cc', ':cclose<CR>')
 set('n', '<leader>cd', ':cexpr []<CR>')
 
 -- file specific

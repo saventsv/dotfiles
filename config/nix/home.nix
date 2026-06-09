@@ -6,6 +6,8 @@
   home.username = "saven";
   home.homeDirectory = "/home/saven";
 
+ # TODO add a modules list for configuration
+
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
   # introduces backwards incompatible changes.
@@ -20,30 +22,27 @@
   # the difference between putting a package in home.packages and programs.<package> =  is that that
   # home.packages just installs the binary while programs.<package> = allows configuration
   home.packages = with pkgs; [
-    # # Adds the 'hello' command to your environment. It prints a friendly
-    # # "Hello, world!" when run.
-    # pkgs.hello
     
     # nvim dependancies
-    gopls
-    bash-language-server
-    lua-language-server
-    clang-tools
-    jdt-language-server
-    bash-language-server
-    ripgrep
-
-    # dotfile dependancies
-    fzf
-    kitty # think about swtiching to st
-    neovim 
-    rofi # might switch to dmenu
-    kdePackages.sddm # might switch
-    zellij # will switch to personal multiplexer or tmux
-    starship
-    hyprland
-    waybar # might switch to quickshell
-    awww
+    # gopls
+    # bash-language-server
+    # lua-language-server
+    # clang-tools
+    # jdt-language-server
+    # bash-language-server
+    # ripgrep
+    #
+    # # dotfile dependancies
+    # fzf
+    # kitty # think about swtiching to st
+    # neovim 
+    # rofi # might switch to dmenu
+    # kdePackages.sddm # might switch
+    # zellij # will switch to personal multiplexer or tmux
+    # starship
+    # hyprland
+    # waybar # might switch to quickshell
+    # awww
     # If using X11
     # polybar # also might switch for quickshell
     # picom

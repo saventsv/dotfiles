@@ -1,7 +1,7 @@
 # ~/.zshrc
 
 setopt interactive_comments
-setopt AUTO_CD
+# setopt AUTO_CD
 autoload -Uz compinit && compinit
 zstyle ':completion:*' menu select 
 
@@ -9,6 +9,7 @@ export COLORTERM=truecolor
 export TERM=xterm-256color
 
 alias ll='eza -lah --icons --git --group-directories-first --color=always'
+alias ff='fastfetch'
 alias n='nvim'
 alias i='sudo pacman -S'
 alias a='yay -S'
@@ -103,7 +104,7 @@ ZSH_HIGHLIGHT_STYLES[main:double-hyphen-option]='fg=#81a1c1'
 
 
 
-bindkey '^ ' autosuggest-accept
+bindkey '^E' autosuggest-accept
 
 [[ -f ~/.zsh/fzf-tab/fzf-tab.zsh ]] && source ~/.zsh/fzf-tab/fzf-tab.zsh
 zstyle ':fzf-tab:*' fzf-flags "--color=bg+:#3b4252,bg:#2e3440,spinner:#81a1c1,hl:#616e88,fg:#d8dee9,header:#616e88,info:#b48ead,pointer:#81a1c1,marker:#81a1c1,fg+:#eceff4,prompt:#81a1c1,hl+:#81a1c1"
