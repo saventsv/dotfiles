@@ -34,7 +34,11 @@ vim.pack.add({
   "https://github.com/wakatime/vim-wakatime",
 })
 
--- vim.opt.rtp:append("/home/saven/Programming/back-end/mark-it.nvim")
+vim.opt.rtp:append("/home/saven/Programming/back-end/mark-it.nvim")
+require("markit").setup({
+  bullet_cycle = true,
+  indent = "  ",
+})
 
 -- config
 require("fzf-lua").setup({})
@@ -51,25 +55,46 @@ require("oil").setup({
   },
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-  callback = function()
-    local ok, ts = pcall(require, "nvim-treesitter.configs")
-    if not ok then return end
-    ts.setup({
-      highlight = { enable = true },
-      ensure_installed = {
-        "lua",
-        "go",
-        "javascript",
-        "typescript",
-        "c",
-        "cpp",
-        "java",
-      },
-      auto_install = true,
-    })
-  end,
-})
+-- vim.api.nvim_create_autocmd("FileType", {
+--   callback = function()
+--     local ok, ts = pcall(require, "nvim-treesitter.configs")
+--     if not ok then return end
+--     ts.setup({
+--       highlight = { enable = true },
+--       ensure_installed = {
+--         "lua",
+--         "elixir",
+--         "nix",
+--         "go",
+--         "javascript",
+--         "typescript",
+--         "c",
+--         "cpp",
+--         "java",
+--       },
+--       auto_install = true,
+--     })
+--   end,
+-- })
+
+local ok, ts = pcall(require, "nvim-treesitter.configs")
+if ok then
+  ts.setup({
+    highlight = { enable = true },
+    ensure_installed = {
+      "lua",
+      "elixir",
+      "nix",
+      "go",
+      "javascript",
+      "typescript",
+      "c",
+      "cpp",
+      "java",
+    },
+    auto_install = true,
+  })
+end
 
 vim.api.nvim_create_autocmd("InsertEnter", {
   once = true,
@@ -79,7 +104,6 @@ vim.api.nvim_create_autocmd("InsertEnter", {
   end,
 })
 
--- require("markview").setup({})
 
 
 -- theming

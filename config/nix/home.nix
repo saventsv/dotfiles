@@ -5,6 +5,7 @@
   # manage.
   home.username = "saven";
   home.homeDirectory = "/home/saven";
+  nixpkgs.config.allowUnfree = true;
 
  # TODO add a modules list for configuration
 
@@ -22,6 +23,9 @@
   # the difference between putting a package in home.packages and programs.<package> =  is that that
   # home.packages just installs the binary while programs.<package> = allows configuration
   home.packages = with pkgs; [
+
+  elixir-ls
+  tree-sitter
     
     # nvim dependancies
     # gopls
@@ -62,7 +66,7 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
   ];
-
+  
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {

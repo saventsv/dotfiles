@@ -35,6 +35,7 @@ setup("lua_ls", {
 
 
 setup("gopls")
+setup("elixirls")
 -- setup("bashls")
 setup("ts_ls")
 setup("pyright")
@@ -45,6 +46,7 @@ setup("nixd")
 vim.lsp.enable({
 	"gopls",
 	"lua_ls",
+  "elixirls",
   "ts_ls",
 	"clangd",
   "pyright",

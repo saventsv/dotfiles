@@ -8,20 +8,21 @@ set('n', '<C-d>', '<C-d>zz')
 set('n', '<C-u>', '<C-u>zz')
 set('i', '<C-Backspace>', '<C-w>', { silent = true })
 -- set({'n', 'v'}, '<C-y>', '"+y', { desc = 'Copy to system clipboard' })
-set({'n'; 'v'}, '<leader>cc', '"+y', { desc = 'Copy to system clipboard' })
+set({'n'; 'v'}, '<leader>yy', '"+y', { desc = 'Copy to system clipboard' })
 set('i', '<C-v>', '<C-g>u<C-r><C-o>+')
 set('n', '<leader>e', vim.diagnostic.open_float)
 set('n', 'ge', '$')
 set('n', 'gs', '^')
 set('n', 'gh', ':nohl<CR>')
-set('v', '<leader>rs', ':s/')
+set('v', '<leader>rs', ':s//g<Left><Left>')
 set('n', '<leader>rf', ':%s/')
-set('n', '<leader>rl', ':s/')
+set('n', '<leader>rl', ':s//g<Left><Left>')
 set('n', '<leader>rw', [[:s/\<<C-r><C-w>\>//g<Left><Left>]])
 set('n', '<leader>in', '<C-a>')
 set('n', '<leader>hs', ':split<CR>')
 set('n', '<leader>vs', ':vsplit<CR>')
 set('n', '<leader>cl', 'gcc', {remap = true})
+
 
 
 -- mini surround
@@ -58,8 +59,8 @@ local harpoon = require("harpoon")
 
 harpoon:setup()
 
-set('n', '<leader>ha', function() harpoon:list():add() end)
-set('n', '<leader>he', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+set('n', '<leader>hh', function() harpoon:list():add() end)
+set('n', '<leader>hl', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 
 set('n', '<A-1>', function() harpoon:list():select(1) end)
 set('n', '<A-2>', function() harpoon:list():select(2) end)
@@ -105,7 +106,7 @@ set('t', '<C-l>', [[<C-\><C-N><C-w>l]])
 set('n', '<leader>vs', ':vsplit<CR>')
 set('n', '<leader>hs', ':split<CR>')
 
-set('n', '<leader>cb', ':close<CR>')
+set('n', '<leader>cc', ':close<CR>')
 
 
 -- terminal
@@ -127,10 +128,13 @@ set('n', '<leader>cd', ':cexpr []<CR>')
 -- file specific
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
-  callback = function()
-    -- set('i', '<Tab>', '<C-o>:Promote<CR>', { buffer = true })
-    -- set('i', '<S-Tab>', '<C-o>:Demote<CR>', { buffer = true })
+  callback = function(event)
+    set('i', '<Tab>', '<C-o>:Promote<CR>', { buffer = true })
+    set('i', '<S-Tab>', '<C-o>:Demote<CR>', { buffer = true })
     set('n', '<leader>tt', ':Markview<CR>', { buffer = true })
+    set('n', '<leader>tw', ':set wrap!<R>', { buffer = true })
+    -- vim.keymap.set("i", "<Tab>", "<C-T>", opts)
+    -- vim.keymap.set("i", "<S-Tab>", "<C-D>", opts)
   end
 })
 

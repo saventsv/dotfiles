@@ -29,10 +29,12 @@ opt.wildmenu = true
 opt.wildmode = "longest:full,full"
 opt.wildignorecase = true
 opt.timeout = true
-opt.timeoutlen = 300
+-- opt.timeoutlen = 300
+opt.timeoutlen = 250
 opt.grepprg = "rg --vimgrep"
 opt.grepformat = "%f:%l:%c:%m"
 opt.splitright = true
+opt.termguicolors = true
 
 
 -- hilighting when yanking text
@@ -102,4 +104,3 @@ require("config.plugins")
 require("config.lsp")
 require("config.cmp")
 require("config.keymaps")
--- require("markit").setup()

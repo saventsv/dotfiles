@@ -1,5 +1,0 @@
-[Desktop Entry]
-Name=SWM
-Comment=Lightweight custom window manager
-Exec=/usr/local/bin/swm
-Type=XSession

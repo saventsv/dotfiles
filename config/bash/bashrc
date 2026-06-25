@@ -28,8 +28,7 @@ alias view="kitty +kitten icat"
 alias ga="git add -A"
 alias gc="git commit -m"
 alias push="git push origin main"
-PS1='[\u@\h \W]\$ '
-PS1='\u@\h (\A) [\W] 󰣇 '
+PS1='\u:\w\n> '
 
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
