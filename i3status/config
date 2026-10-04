@@ -1,0 +1,31 @@
+general {
+	colors = true
+	interval = 2
+	markup = pango
+	color_good = "#a7c080"
+	color_bad = "#e67e80"
+	color_degraded = "#dbbc7f"
+}
+
+order += "wireless _first_"
+order += "volume master"
+order += "battery all"
+order += "tztime local"
+
+wireless _first_ {
+	format_up = " %essid %quality"
+	format_down = "  disconnected"
+}
+
+volume master {
+    format = " %volume"
+    format_muted = " muted"
+}
+
+battery all {
+    format = " %status %percentage"
+}
+
+tztime local {
+    format = "%I:%M %p"
+}
