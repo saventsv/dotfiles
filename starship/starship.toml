@@ -1,0 +1,24 @@
+format = "$username in $directory $git_branch\n$character"
+
+[username]
+show_always = true
+style_user = "green"
+style_root = "red"
+format = "[$user]($style)"
+
+[directory]
+style = "blue"
+truncation_length = 0
+truncate_to_repo = false
+format = "[$path]($style)"
+
+[git_branch]
+symbol = " "
+style = "purple"
+format = "[$symbol$branch]($style)"
+
+[character]
+success_symbol = "󰘧 "
+error_symbol = "󰘧 "
+vimcmd_symbol = " "
+
