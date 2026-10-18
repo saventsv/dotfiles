@@ -12,18 +12,18 @@ choice=$(
 
 case "$choice" in
 "WiFi")
-  /home/saven/dotfiles/i3/scripts/wifi.sh
+  /home/saven/dotfiles/.config/i3/scripts/wifi.sh
   ;;
 "Bluetooth")
-  /home/saven/dotfiles/i3/scripts/bluetooth.sh
+  /home/saven/dotfiles/.config/i3/scripts/bluetooth.sh
   ;;
 "Wallpaper")
-  /home/saven/dotfiles/i3/scripts/wallpaper.sh
+  /home/saven/dotfiles/.config/i3/scripts/wallpaper.sh
   ;;
 "Power")
-  /home/saven/dotfiles/i3/scripts/power.sh
+  /home/saven/dotfiles/.config/i3/scripts/power.sh
   ;;
 "Power Profile")
-  /home/saven/dotfiles/i3/scripts/power-profiles.sh
+  /home/saven/dotfiles/.config/i3/scripts/power-profiles.sh
   ;;
 esac

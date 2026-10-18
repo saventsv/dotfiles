@@ -68,7 +68,7 @@ bindsym $mod+q kill
 
 # start dmenu (a program launcher)
 bindsym $alt+space exec --no-startup-id rofi -show drun
-bindsym $mod+m exec /home/saven/dotfiles/i3/system-menu.sh
+bindsym $mod+m exec /home/saven/dotfiles/.config/i3/system-menu.sh
 # A more modern dmenu replacement is rofi:
 # bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
