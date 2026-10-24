@@ -54,10 +54,6 @@ alias cdi='builtin cd'
 
 eval "$(starship init zsh)"
 
-if [[ -z "$SSH_CONNECTION" ]]; then
-    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-fi
-
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '^ ' autosuggest-accept
 
@@ -102,7 +98,4 @@ ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#e67e80,bold'
 ZSH_HIGHLIGHT_STYLES[precommand]='fg=#e69875'
 ZSH_HIGHLIGHT_STYLES[comment]='fg=#859289'
 
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-
 PATH="$HOME/.local/bin:$PATH"
-export ODIN_ROOT="$HOME/src/Odin"
