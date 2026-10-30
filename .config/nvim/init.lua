@@ -34,3 +34,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 require("config.keys")
 require("config.lazy")
+require("config.lsp")
+
+vim.cmd([[colorscheme everforest]])
