@@ -46,7 +46,7 @@ keys = [
     Key([mod], "Return", lazy.spawn(terminal)),
     Key([alt], "space", lazy.spawn("rofi -show drun")),
     Key([mod], "m", lazy.spawn(
-        "/home/saven/dotfiles/i3/system-menu.sh"
+        "/home/saven/.config/i3/system-menu.sh"
     )),
 
     # Close focused window

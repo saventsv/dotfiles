@@ -20,6 +20,7 @@ vim.opt.timeout = true
 vim.opt.timeoutlen = 350
 vim.opt.splitright = true
 vim.opt.linebreak = true
+vim.opt.guicursor = ""
 
 
 -- highlighting when yanking text
